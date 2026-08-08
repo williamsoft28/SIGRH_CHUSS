@@ -24,4 +24,12 @@ class Service extends Model
     {
         return $this->hasMany(Beneficiaire::class);
     }
+
+    /**
+     * @return HasMany<Derogation, $this>
+     */
+    public function derogations(): HasMany
+    {
+        return $this->hasMany(Derogation::class);
+    }
 }

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'nom',
     'categorie',
     'numero_whatsapp',
+    'email',
     'type',
 ])]
 class Beneficiaire extends Model

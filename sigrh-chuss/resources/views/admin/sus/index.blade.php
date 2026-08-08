@@ -1,0 +1,93 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Comptes SUS') }}
+        </h2>
+    </x-slot>
+
+    <div class="py-12">
+        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-6">
+
+            @if (session('status'))
+                <div class="bg-green-100 border border-green-300 text-green-800 px-4 py-3 rounded-md">
+                    {{ session('status') }}
+                </div>
+            @endif
+
+            @if (session('identifiants'))
+                @php $identifiants = session('identifiants'); @endphp
+                <div class="bg-amber-50 border border-amber-300 text-amber-900 px-4 py-4 rounded-md space-y-2">
+                    <p class="font-semibold">
+                        {{ __('Identifiants générés pour') }} {{ $identifiants['nom'] }}
+                        &mdash; {{ __('à transmettre maintenant, ils ne seront plus affichés ensuite.') }}
+                    </p>
+                    <dl class="grid grid-cols-2 gap-2 text-sm max-w-md">
+                        <dt class="text-amber-700">{{ __('Identifiant') }}</dt>
+                        <dd class="font-mono font-semibold">{{ $identifiants['username'] }}</dd>
+                        <dt class="text-amber-700">{{ __('Mot de passe') }}</dt>
+                        <dd class="font-mono font-semibold">{{ $identifiants['password'] }}</dd>
+                    </dl>
+                    @if ($identifiants['email_envoye'] ?? false)
+                        <p class="text-sm text-green-700">
+                            ✓ {{ __('Envoyé par email à') }} {{ $identifiants['email'] }}.
+                        </p>
+                    @else
+                        <p class="text-sm text-red-700">
+                            ⚠ {{ __("L'envoi par email a échoué (vérifie la configuration SMTP) — transmets ces identifiants manuellement.") }}
+                        </p>
+                    @endif
+                </div>
+            @endif
+
+            <div class="flex justify-end">
+                <a href="{{ route('admin.sus.create') }}"
+                   class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700">
+                    {{ __('Créer un compte SUS') }}
+                </a>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Nom') }}</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Matricule') }}</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Service') }}</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Identifiant') }}</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Email de récupération') }}</th>
+                                <th class="px-6 py-3"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse ($comptes as $compte)
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $compte->name }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $compte->matricule ?? '—' }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $compte->service?->nom ?? '—' }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500">{{ $compte->username ?? '—' }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $compte->email }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                                        <form method="POST" action="{{ route('admin.sus.reinitialiser-mot-de-passe', $compte) }}"
+                                              onsubmit="return confirm('{{ __('Générer un nouveau mot de passe pour ce compte ?') }}');">
+                                            @csrf
+                                            <button type="submit" class="text-indigo-600 hover:text-indigo-900">
+                                                {{ __('Réinitialiser le mot de passe') }}
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
+                                        {{ __('Aucun compte SUS créé.') }}
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</x-app-layout>

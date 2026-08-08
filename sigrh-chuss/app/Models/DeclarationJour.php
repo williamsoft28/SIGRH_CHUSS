@@ -12,6 +12,10 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
     'beneficiaire_id',
     'date_repas',
     'heure_limite',
+    'type_periode',
+    'date_debut',
+    'date_fin',
+    'repas',
     'statut',
     'deroge',
 ])]
@@ -24,6 +28,9 @@ class DeclarationJour extends Model
     {
         return [
             'date_repas' => 'date',
+            'date_debut' => 'date',
+            'date_fin' => 'date',
+            'repas' => 'array',
             'deroge' => 'boolean',
         ];
     }

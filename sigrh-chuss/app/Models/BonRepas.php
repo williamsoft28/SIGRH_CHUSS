@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 #[Fillable([
     'declaration_jour_id',
@@ -44,5 +45,27 @@ class BonRepas extends Model
     public function consommations(): HasMany
     {
         return $this->hasMany(Consommation::class);
+    }
+
+    /**
+     * Droits attendus (jour + repas) du calendrier hebdomadaire, s'il y en a.
+     *
+     * @return HasMany<DroitRepas, $this>
+     */
+    public function droits(): HasMany
+    {
+        return $this->hasMany(DroitRepas::class);
+    }
+
+    /**
+     * Génère un code_unique aléatoire et non devinable, garanti unique en base.
+     */
+    public static function genererCodeUnique(): string
+    {
+        do {
+            $code = Str::random(48);
+        } while (self::where('code_unique', $code)->exists());
+
+        return $code;
     }
 }
