@@ -50,4 +50,14 @@ class User extends Authenticatable
     {
         return $this->hasOne(Sus::class);
     }
+
+    /**
+     * Visites médicales de l'agent.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function visitesMedicales()
+    {
+        return $this->hasMany(VisiteMedicale::class);
+    }
 }

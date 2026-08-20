@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable([
     'service_id',
     'date',
+    'heure_debut',
+    'heure_fin',
     'statut',
     'motif',
     'demande_par_id',

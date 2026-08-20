@@ -25,11 +25,11 @@
                 </form>
             </div>
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white/80 backdrop-blur-xl overflow-hidden shadow-float rounded-2xl border border-white/60">
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-gradient-to-r from-chuss-green/5 to-chuss-amber/5 border-b border-gray-100">
+                            <tr class="hover:bg-white/60 transition-colors duration-200 group">
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Service') }}</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Bénéficiaire') }}</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Repas') }}</th>
@@ -38,9 +38,9 @@
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Valider') }}</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
+                        <tbody class="divide-y divide-gray-100/50">
                             @forelse ($declarations as $declaration)
-                                <tr>
+                                <tr class="hover:bg-white/60 transition-colors duration-200 group">
                                     <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ $declaration->beneficiaire->service->nom }}</td>
                                     <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                                         {{ $declaration->beneficiaire->nom }}
@@ -77,7 +77,7 @@
                                     </td>
                                 </tr>
                             @empty
-                                <tr>
+                                <tr class="hover:bg-white/60 transition-colors duration-200 group">
                                     <td colspan="6" class="px-4 py-4 text-center text-sm text-gray-500">
                                         {{ __('Aucune déclaration en attente pour cette date.') }}
                                     </td>

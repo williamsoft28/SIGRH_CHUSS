@@ -72,17 +72,17 @@
                     <x-input-error :messages="$errors->get('categorie_jour')" class="mb-4" />
 
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
+                        <table class="w-full text-left border-collapse no-grid">
+                            <thead class="bg-gradient-to-r from-chuss-green/5 to-chuss-amber/5 border-b border-gray-100">
+                                <tr class="hover:bg-white/60 transition-colors duration-200 group">
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Jour') }}</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Catégorie') }}</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
+                            <tbody class="divide-y divide-gray-100/50">
                                 @foreach ($jours as $jour)
                                     @php $dateStr = $jour->toDateString(); @endphp
-                                    <tr>
+                                    <tr class="hover:bg-white/60 transition-colors duration-200 group">
                                         <td class="px-4 py-3 text-sm text-gray-900">
                                             <span class="font-medium capitalize">{{ $jour->locale('fr')->translatedFormat('l') }}</span>
                                             <span class="text-gray-400">{{ $jour->format('d/m/Y') }}</span>

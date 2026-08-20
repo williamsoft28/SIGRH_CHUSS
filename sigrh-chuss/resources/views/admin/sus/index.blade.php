@@ -46,27 +46,27 @@
                 </a>
             </div>
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white/80 backdrop-blur-xl overflow-hidden shadow-float rounded-2xl border border-white/60">
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Nom') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Matricule') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Service') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Identifiant') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Email de récupération') }}</th>
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-gradient-to-r from-chuss-green/5 to-chuss-amber/5 border-b border-gray-100">
+                            <tr class="hover:bg-white/60 transition-colors duration-200 group">
+                                <th class="px-6 py-4 text-xs font-bold text-chuss-dark uppercase tracking-wider">{{ __('Nom') }}</th>
+                                <th class="px-6 py-4 text-xs font-bold text-chuss-dark uppercase tracking-wider">{{ __('Matricule') }}</th>
+                                <th class="px-6 py-4 text-xs font-bold text-chuss-dark uppercase tracking-wider">{{ __('Service') }}</th>
+                                <th class="px-6 py-4 text-xs font-bold text-chuss-dark uppercase tracking-wider">{{ __('Identifiant') }}</th>
+                                <th class="px-6 py-4 text-xs font-bold text-chuss-dark uppercase tracking-wider">{{ __('Email de récupération') }}</th>
                                 <th class="px-6 py-3"></th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
+                        <tbody class="divide-y divide-gray-100/50">
                             @forelse ($comptes as $compte)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $compte->name }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $compte->matricule ?? '—' }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $compte->service?->nom ?? '—' }}</td>
+                                <tr class="hover:bg-white/60 transition-colors duration-200 group">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $compte->name }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $compte->matricule ?? '—' }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $compte->service?->nom ?? '—' }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500">{{ $compte->username ?? '—' }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $compte->email }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $compte->email }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
                                         <form method="POST" action="{{ route('admin.sus.reinitialiser-mot-de-passe', $compte) }}"
                                               onsubmit="return confirm('{{ __('Générer un nouveau mot de passe pour ce compte ?') }}');">
@@ -78,7 +78,7 @@
                                     </td>
                                 </tr>
                             @empty
-                                <tr>
+                                <tr class="hover:bg-white/60 transition-colors duration-200 group">
                                     <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
                                         {{ __('Aucun compte SUS créé.') }}
                                     </td>

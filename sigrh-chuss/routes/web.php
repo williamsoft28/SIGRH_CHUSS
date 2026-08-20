@@ -8,7 +8,9 @@ use App\Http\Controllers\AdminSusController;
 use App\Http\Controllers\BeneficiaireController;
 use App\Http\Controllers\BonPublicController;
 use App\Http\Controllers\ControleurScanController;
+use App\Http\Controllers\PrestataireMenuController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ServiceHotellerieMenuController;
 use App\Http\Controllers\SusBonRepasController;
 use App\Http\Controllers\SusDeclarationController;
 use App\Http\Controllers\SusDerogationController;
@@ -52,6 +54,12 @@ Route::middleware(['auth', 'role:sus'])->prefix('sus')->name('declarations.')->g
     Route::post('/declarations', [SusDeclarationController::class, 'store'])->name('store');
 });
 
+Route::middleware(['auth', 'role:sus'])->prefix('sus/declarations-patients')->name('beneficiaires.declarations-patients.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\SusDeclarationPatientController::class, 'index'])->name('index');
+    Route::get('/creer', [\App\Http\Controllers\SusDeclarationPatientController::class, 'create'])->name('create');
+    Route::post('/', [\App\Http\Controllers\SusDeclarationPatientController::class, 'store'])->name('store');
+});
+
 Route::middleware(['auth', 'role:sus'])->prefix('sus')->name('derogations.')->group(function () {
     Route::get('/derogations', [SusDerogationController::class, 'index'])->name('index');
     Route::post('/derogations', [SusDerogationController::class, 'store'])->name('store');
@@ -61,10 +69,7 @@ Route::middleware(['auth', 'role:administrateur'])->prefix('admin')->name('admin
     Route::get('/declarations', [AdminDeclarationController::class, 'index'])->name('declarations.index');
     Route::post('/declarations/{declaration}/valider', [AdminDeclarationController::class, 'valider'])->name('declarations.valider');
 
-    Route::get('/derogations', [AdminDerogationController::class, 'index'])->name('derogations.index');
-    Route::post('/derogations', [AdminDerogationController::class, 'store'])->name('derogations.store');
-    Route::post('/derogations/{derogation}/autoriser', [AdminDerogationController::class, 'autoriser'])->name('derogations.autoriser');
-    Route::post('/derogations/{derogation}/refuser', [AdminDerogationController::class, 'refuser'])->name('derogations.refuser');
+    Route::get('/declarations-patients', [\App\Http\Controllers\AdminDeclarationPatientController::class, 'index'])->name('declarations_patients.index');
 
     Route::get('/bons/{bon}', [AdminBonRepasController::class, 'show'])->name('bons.show');
     Route::get('/bons/{bon}/telecharger', [AdminBonRepasController::class, 'telecharger'])->name('bons.telecharger');
@@ -83,11 +88,60 @@ Route::middleware(['auth', 'role:administrateur'])->prefix('admin')->name('admin
     Route::get('/sus/creer', [AdminSusController::class, 'create'])->name('sus.create');
     Route::post('/sus', [AdminSusController::class, 'store'])->name('sus.store');
     Route::post('/sus/{sus}/reinitialiser-mot-de-passe', [AdminSusController::class, 'reinitialiserMotDePasse'])->name('sus.reinitialiser-mot-de-passe');
+    
+    // Zones
+    Route::get('/zones', [\App\Http\Controllers\AdminZoneController::class, 'index'])->name('zones.index');
+    Route::post('/zones', [\App\Http\Controllers\AdminZoneController::class, 'store'])->name('zones.store');
+    Route::put('/zones/{zone}', [\App\Http\Controllers\AdminZoneController::class, 'update'])->name('zones.update');
+    Route::delete('/zones/{zone}', [\App\Http\Controllers\AdminZoneController::class, 'destroy'])->name('zones.destroy');
+
+    // Controle Service (Hotellerie)
+    Route::get('/controle-service', [\App\Http\Controllers\AdminZoneServiceController::class, 'index'])->name('controle_service.index');
+    Route::post('/controle-service/{zone}/valider', [\App\Http\Controllers\AdminZoneServiceController::class, 'valider'])->name('controle_service.valider');
+    Route::post('/controle-service/{zone}/signaler', [\App\Http\Controllers\AdminZoneServiceController::class, 'signaler'])->name('controle_service.signaler');
+
+    // Suivi Médical
+    Route::get('/suivi-medical', [\App\Http\Controllers\AdminVisiteController::class, 'index'])->name('suivi_medical.index');
+    Route::post('/suivi-medical', [\App\Http\Controllers\AdminVisiteController::class, 'store'])->name('suivi_medical.store');
+    Route::put('/suivi-medical/{visite}', [\App\Http\Controllers\AdminVisiteController::class, 'update'])->name('suivi_medical.update');
 });
 
 Route::middleware(['auth', 'role:controleur'])->prefix('controleur')->name('controleur.')->group(function () {
     Route::get('/scanner', [ControleurScanController::class, 'index'])->name('scanner');
     Route::post('/verifier', [ControleurScanController::class, 'verifier'])->name('verifier');
+});
+
+Route::middleware(['auth', 'role:service_hotellerie'])->prefix('hotellerie')->name('hotellerie.')->group(function () {
+    Route::get('/menus', [ServiceHotellerieMenuController::class, 'index'])->name('menus.index');
+    Route::get('/menus/creer', [ServiceHotellerieMenuController::class, 'create'])->name('menus.create');
+    Route::post('/menus', [ServiceHotellerieMenuController::class, 'store'])->name('menus.store');
+    Route::get('/menus/{menu}', [ServiceHotellerieMenuController::class, 'show'])->name('menus.show');
+    Route::put('/menus/{menu}', [ServiceHotellerieMenuController::class, 'update'])->name('menus.update');
+    Route::post('/menus/{menu}/valider', [ServiceHotellerieMenuController::class, 'valider'])->name('menus.valider');
+    Route::post('/observations/{observation}/traiter', [ServiceHotellerieMenuController::class, 'marquerObservationTraitee'])->name('observations.traiter');
+});
+
+Route::middleware(['auth', 'role:prestataire'])->prefix('prestataire')->name('prestataire.')->group(function () {
+    Route::get('/menus', [PrestataireMenuController::class, 'index'])->name('menus.index');
+    Route::get('/menus/historique', [PrestataireMenuController::class, 'historique'])->name('menus.historique');
+    Route::get('/menus/{menu}', [PrestataireMenuController::class, 'show'])->name('menus.show');
+    Route::post('/menus/{menu}/observations', [PrestataireMenuController::class, 'storeObservation'])->name('menus.observations.store');
+    Route::post('/menus/{menu}/envoyer', [PrestataireMenuController::class, 'envoyerObservations'])->name('menus.envoyer');
+});
+
+Route::middleware(['auth', 'role:super_administrateur'])->prefix('super-admin')->name('super_admin.')->group(function () {
+    Route::resource('users', \App\Http\Controllers\SuperAdminUserController::class);
+    Route::resource('annees', \App\Http\Controllers\SuperAdminAnneeController::class);
+    Route::post('annees/{annee}/archiver', [\App\Http\Controllers\SuperAdminAnneeController::class, 'archiver'])->name('annees.archiver');
+
+    // Dérogations pour Super Admin
+    Route::get('/derogations', [AdminDerogationController::class, 'index'])->name('derogations.index');
+    Route::post('/derogations', [AdminDerogationController::class, 'store'])->name('derogations.store');
+    Route::post('/derogations/tout-debloquer', [AdminDerogationController::class, 'toutDebloquer'])->name('derogations.tout-debloquer');
+    Route::post('/derogations/tout-rebloquer', [AdminDerogationController::class, 'toutRebloquer'])->name('derogations.tout-rebloquer');
+    Route::post('/derogations/{derogation}/autoriser', [AdminDerogationController::class, 'autoriser'])->name('derogations.autoriser');
+    Route::post('/derogations/{derogation}/refuser', [AdminDerogationController::class, 'refuser'])->name('derogations.refuser');
+    Route::delete('/derogations/{derogation}', [AdminDerogationController::class, 'destroy'])->name('derogations.destroy');
 });
 
 require __DIR__.'/auth.php';

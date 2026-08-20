@@ -24,36 +24,36 @@
                 </a>
             </div>
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white/80 backdrop-blur-xl overflow-hidden shadow-float rounded-2xl border border-white/60">
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Bénéficiaire') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Période') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Repas') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Statut') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Bon de repas') }}</th>
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-gradient-to-r from-chuss-green/5 to-chuss-amber/5 border-b border-gray-100">
+                            <tr class="hover:bg-white/60 transition-colors duration-200 group">
+                                <th class="px-6 py-4 text-xs font-bold text-chuss-dark uppercase tracking-wider">{{ __('Bénéficiaire') }}</th>
+                                <th class="px-6 py-4 text-xs font-bold text-chuss-dark uppercase tracking-wider">{{ __('Période') }}</th>
+                                <th class="px-6 py-4 text-xs font-bold text-chuss-dark uppercase tracking-wider">{{ __('Repas') }}</th>
+                                <th class="px-6 py-4 text-xs font-bold text-chuss-dark uppercase tracking-wider">{{ __('Statut') }}</th>
+                                <th class="px-6 py-4 text-xs font-bold text-chuss-dark uppercase tracking-wider">{{ __('Bon de repas') }}</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
+                        <tbody class="divide-y divide-gray-100/50">
                             @forelse ($declarations as $declaration)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $declaration->beneficiaire->nom }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <tr class="hover:bg-white/60 transition-colors duration-200 group">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $declaration->beneficiaire->nom }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                         {{ $declaration->date_debut->format('d/m/Y') }}
                                         @if (! $declaration->date_debut->equalTo($declaration->date_fin))
                                             &rarr; {{ $declaration->date_fin->format('d/m/Y') }}
                                         @endif
                                         <span class="text-xs text-gray-400">({{ $declaration->type_periode }})</span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                         {{ collect($declaration->repas)->map(fn ($r) => str_replace('_', ' ', $r))->implode(', ') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                                         <x-declaration-statut-badge :statut="$declaration->statut" />
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                         @if ($declaration->bonRepas)
                                             {{ __('Généré') }}
                                         @else
@@ -62,7 +62,7 @@
                                     </td>
                                 </tr>
                             @empty
-                                <tr>
+                                <tr class="hover:bg-white/60 transition-colors duration-200 group">
                                     <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
                                         {{ __('Aucune déclaration enregistrée.') }}
                                     </td>

@@ -44,27 +44,27 @@
                 </form>
             </div>
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white/80 backdrop-blur-xl overflow-hidden shadow-float rounded-2xl border border-white/60">
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Date') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Motif') }}</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Statut') }}</th>
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-gradient-to-r from-chuss-green/5 to-chuss-amber/5 border-b border-gray-100">
+                            <tr class="hover:bg-white/60 transition-colors duration-200 group">
+                                <th class="px-6 py-4 text-xs font-bold text-chuss-dark uppercase tracking-wider">{{ __('Date') }}</th>
+                                <th class="px-6 py-4 text-xs font-bold text-chuss-dark uppercase tracking-wider">{{ __('Motif') }}</th>
+                                <th class="px-6 py-4 text-xs font-bold text-chuss-dark uppercase tracking-wider">{{ __('Statut') }}</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
+                        <tbody class="divide-y divide-gray-100/50">
                             @forelse ($derogations as $derogation)
-                                <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $derogation->date->format('d/m/Y') }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-500">{{ $derogation->motif ?? '—' }}</td>
+                                <tr class="hover:bg-white/60 transition-colors duration-200 group">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $derogation->date->format('d/m/Y') }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-600">{{ $derogation->motif ?? '—' }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                                         <x-derogation-statut-badge :statut="$derogation->statut" />
                                     </td>
                                 </tr>
                             @empty
-                                <tr>
+                                <tr class="hover:bg-white/60 transition-colors duration-200 group">
                                     <td colspan="3" class="px-6 py-4 text-center text-sm text-gray-500">
                                         {{ __('Aucune demande de dérogation.') }}
                                     </td>

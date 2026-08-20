@@ -1,166 +1,106 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
-    <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
-                    </a>
-                </div>
-
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-
-                    @role('sus')
-                        <x-nav-link :href="route('beneficiaires.index')" :active="request()->routeIs('beneficiaires.*')">
-                            {{ __('Bénéficiaires') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('declarations.index')" :active="request()->routeIs('declarations.*')">
-                            {{ __('Déclarations') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('derogations.index')" :active="request()->routeIs('derogations.*')">
-                            {{ __('Dérogations') }}
-                        </x-nav-link>
-                    @endrole
-
-                    @role('administrateur')
-                        <x-nav-link :href="route('admin.declarations.index')" :active="request()->routeIs('admin.declarations.*') || request()->routeIs('admin.bons.*')">
-                            {{ __('Déclarations à valider') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('admin.beneficiaires.jour')" :active="request()->routeIs('admin.beneficiaires.jour')">
-                            {{ __('Bénéficiaires du jour') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('admin.beneficiaires.index')" :active="request()->routeIs('admin.beneficiaires.*') && ! request()->routeIs('admin.beneficiaires.jour')">
-                            {{ __('Bénéficiaires') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('admin.sus.index')" :active="request()->routeIs('admin.sus.*')">
-                            {{ __('Comptes SUS') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('admin.derogations.index')" :active="request()->routeIs('admin.derogations.*')">
-                            {{ __('Dérogations') }}
-                        </x-nav-link>
-                    @endrole
-
-                    @role('controleur')
-                        <x-nav-link :href="route('controleur.scanner')" :active="request()->routeIs('controleur.*')">
-                            {{ __('Scanner') }}
-                        </x-nav-link>
-                    @endrole
-                </div>
+<nav :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}" class="absolute sm:relative z-30 sm:translate-x-0 w-64 h-full bg-white/70 backdrop-blur-2xl shadow-[4px_0_24px_rgba(0,0,0,0.02)] border-r border-white/60 flex flex-col transition-transform duration-300">
+    <!-- Logo area -->
+    <div class="h-16 flex-shrink-0 flex items-center justify-center border-b border-gray-100/80 px-4">
+        <a href="{{ route('dashboard') }}" class="flex items-center gap-3 group w-full">
+            <div class="flex items-center justify-center rounded-xl w-10 h-10 bg-chuss-amber shadow-md transform group-hover:rotate-6 transition-transform duration-300 flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"></path>
+                    <path d="M7 2v20"></path>
+                    <path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path>
+                </svg>
             </div>
-
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
-
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
-
-                    <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
-                        </x-dropdown-link>
-
-                        <!-- Authentication -->
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-
-                            <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();">
-                                {{ __('Log Out') }}
-                            </x-dropdown-link>
-                        </form>
-                    </x-slot>
-                </x-dropdown>
-            </div>
-
-            <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-        </div>
+            <span class="font-bold text-lg text-chuss-dark tracking-tight truncate">SIGRH <span class="font-light text-chuss-amber">CHUSS</span></span>
+        </a>
     </div>
 
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
+    <!-- Navigation Links -->
+    <div class="flex-1 overflow-y-auto py-6 px-3 flex flex-col space-y-2">
+        @role('sus')
+            <x-sidebar-link :href="route('beneficiaires.index')" :active="request()->routeIs('beneficiaires.index')">
+                {{ __('Bénéficiaires') }}
+            </x-sidebar-link>
+            <x-sidebar-link :href="route('declarations.index')" :active="request()->routeIs('declarations.*')">
+                {{ __('Déclarations') }}
+            </x-sidebar-link>
+            <x-sidebar-link :href="route('beneficiaires.declarations-patients.index')" :active="request()->routeIs('beneficiaires.declarations-patients.*')">
+                {{ __('Patients Malades') }}
+            </x-sidebar-link>
+            <x-sidebar-link :href="route('derogations.index')" :active="request()->routeIs('derogations.*')">
+                {{ __('Dérogations') }}
+            </x-sidebar-link>
+        @endrole
 
-            @role('sus')
-                <x-responsive-nav-link :href="route('beneficiaires.index')" :active="request()->routeIs('beneficiaires.*')">
-                    {{ __('Bénéficiaires') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('declarations.index')" :active="request()->routeIs('declarations.*')">
-                    {{ __('Déclarations') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('derogations.index')" :active="request()->routeIs('derogations.*')">
-                    {{ __('Dérogations') }}
-                </x-responsive-nav-link>
-            @endrole
+        @role('super_administrateur')
+            <x-sidebar-link :href="route('super_admin.users.index')" :active="request()->routeIs('super_admin.users.*')">
+                {{ __('Gestion Utilisateurs') }}
+            </x-sidebar-link>
+            <x-sidebar-link :href="route('super_admin.annees.index')" :active="request()->routeIs('super_admin.annees.*')">
+                {{ __('Gestion Années') }}
+            </x-sidebar-link>
+            <x-sidebar-link :href="route('super_admin.derogations.index')" :active="request()->routeIs('super_admin.derogations.*')">
+                {{ __('Dérogations') }}
+            </x-sidebar-link>
+        @endrole
 
-            @role('administrateur')
-                <x-responsive-nav-link :href="route('admin.declarations.index')" :active="request()->routeIs('admin.declarations.*') || request()->routeIs('admin.bons.*')">
-                    {{ __('Déclarations à valider') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('admin.beneficiaires.jour')" :active="request()->routeIs('admin.beneficiaires.jour')">
-                    {{ __('Bénéficiaires du jour') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('admin.beneficiaires.index')" :active="request()->routeIs('admin.beneficiaires.*') && ! request()->routeIs('admin.beneficiaires.jour')">
-                    {{ __('Bénéficiaires') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('admin.sus.index')" :active="request()->routeIs('admin.sus.*')">
-                    {{ __('Comptes SUS') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('admin.derogations.index')" :active="request()->routeIs('admin.derogations.*')">
-                    {{ __('Dérogations') }}
-                </x-responsive-nav-link>
-            @endrole
+        @role('administrateur')
+            <x-sidebar-link :href="route('admin.declarations.index')" :active="request()->routeIs('admin.declarations.*') || request()->routeIs('admin.bons.*')">
+                {{ __('Déclarations à valider') }}
+            </x-sidebar-link>
+            <x-sidebar-link :href="route('admin.declarations_patients.index')" :active="request()->routeIs('admin.declarations_patients.*')">
+                {{ __('Patients Malades') }}
+            </x-sidebar-link>
+            <x-sidebar-link :href="route('admin.beneficiaires.jour')" :active="request()->routeIs('admin.beneficiaires.jour')">
+                {{ __('Bénéficiaires du jour') }}
+            </x-sidebar-link>
+            <x-sidebar-link :href="route('admin.beneficiaires.index')" :active="request()->routeIs('admin.beneficiaires.*') && ! request()->routeIs('admin.beneficiaires.jour')">
+                {{ __('Bénéficiaires') }}
+            </x-sidebar-link>
+            <x-sidebar-link :href="route('admin.sus.index')" :active="request()->routeIs('admin.sus.*')">
+                {{ __('Comptes SUS') }}
+            </x-sidebar-link>
+            <x-sidebar-link :href="route('admin.zones.index')" :active="request()->routeIs('admin.zones.*')">
+                {{ __('Zones Hôtellerie') }}
+            </x-sidebar-link>
+            <x-sidebar-link :href="route('admin.controle_service.index')" :active="request()->routeIs('admin.controle_service.*')">
+                {{ __('Contrôle Hôtellerie') }}
+            </x-sidebar-link>
+            <x-sidebar-link :href="route('admin.suivi_medical.index')" :active="request()->routeIs('admin.suivi_medical.*')">
+                {{ __('Suivi Médical') }}
+            </x-sidebar-link>
+        @endrole
 
-            @role('controleur')
-                <x-responsive-nav-link :href="route('controleur.scanner')" :active="request()->routeIs('controleur.*')">
-                    {{ __('Scanner') }}
-                </x-responsive-nav-link>
-            @endrole
-        </div>
+        @role('controleur')
+            <x-sidebar-link :href="route('controleur.scanner')" :active="request()->routeIs('controleur.*')">
+                {{ __('Scanner') }}
+            </x-sidebar-link>
+        @endrole
 
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-            </div>
+        @role('service_hotellerie')
+            <x-sidebar-link :href="route('hotellerie.menus.index')" :active="request()->routeIs('hotellerie.*')">
+                {{ __('Menus') }}
+            </x-sidebar-link>
+        @endrole
 
-            <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
+        @role('prestataire')
+            <x-sidebar-link :href="route('prestataire.menus.index')" :active="request()->routeIs('prestataire.menus.index') || request()->routeIs('prestataire.menus.show')">
+                {{ __('Menus à examiner') }}
+            </x-sidebar-link>
+            <x-sidebar-link :href="route('prestataire.menus.historique')" :active="request()->routeIs('prestataire.menus.historique')">
+                {{ __('Historique') }}
+            </x-sidebar-link>
+        @endrole
+    </div>
 
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-
-                    <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
-                </form>
-            </div>
-        </div>
+    <!-- Bottom Actions / Logout -->
+    <div class="flex-shrink-0 p-4 border-t border-white/40 mt-auto bg-gradient-to-b from-transparent to-white/50">
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="flex items-center justify-center gap-2 w-full px-4 py-3 text-red-500 bg-red-500/5 hover:bg-red-500/15 hover:text-red-600 rounded-xl font-bold transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                <span>{{ __('Se déconnecter') }}</span>
+            </button>
+        </form>
     </div>
 </nav>

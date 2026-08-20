@@ -44,24 +44,24 @@
                 @csrf
                 <input type="hidden" name="date" value="{{ $date->toDateString() }}">
 
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="bg-white/80 backdrop-blur-xl overflow-hidden shadow-float rounded-2xl border border-white/60">
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
+                        <table class="w-full text-left border-collapse no-grid">
+                            <thead class="bg-gradient-to-r from-chuss-green/5 to-chuss-amber/5 border-b border-gray-100">
+                                <tr class="hover:bg-white/60 transition-colors duration-200 group">
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Mange ce jour') }}</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Bénéficiaire') }}</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Repas concernés') }}</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Période (réguliers)') }}</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
+                            <tbody class="divide-y divide-gray-100/50">
                                 @forelse ($beneficiaires as $beneficiaire)
                                     @php
                                         $dejaDeclare = in_array($beneficiaire->id, $dejaDeclares);
                                         $estGarde = str_contains(strtolower($beneficiaire->categorie), 'garde');
                                     @endphp
-                                    <tr x-data="{ open: false }" class="align-top">
+                                    <tr class="hover:bg-white/60 transition-colors duration-200 group" x-data="{ open: false }" class="align-top">
                                         <td class="px-4 py-4">
                                             @if ($dejaDeclare)
                                                 <span class="text-xs text-gray-400">{{ __('Déjà déclaré(e)') }}</span>
@@ -123,7 +123,7 @@
                                         </td>
                                     </tr>
                                 @empty
-                                    <tr>
+                                    <tr class="hover:bg-white/60 transition-colors duration-200 group">
                                         <td colspan="4" class="px-4 py-4 text-center text-sm text-gray-500">
                                             {{ __("Aucun bénéficiaire enregistré pour votre service.") }}
                                         </td>

@@ -62,6 +62,8 @@ class BeneficiaireController extends Controller
         $sus = $user->sus;
         abort_unless($sus, 403, "Votre compte SUS n'est pas configuré. Contactez l'administrateur.");
 
+        \Illuminate\Support\Facades\Log::info('BENEFICIAIRE_STORE_REQUEST', $request->all());
+
         $data = $request->validate([
             'prenom' => ['required', 'string', 'max:255'],
             'nom' => ['required', 'string', 'max:255'],
@@ -74,7 +76,7 @@ class BeneficiaireController extends Controller
         $lundi = $this->lundiDeLaSemaine(Carbon::parse($data['lundi']));
         $jours = collect(range(0, 6))->map(fn (int $i) => $lundi->copy()->addDays($i));
 
-        $categoriesJour = collect($data['categorie_jour'] ?? [])
+        $categoriesJour = collect($request->input('categorie_jour', []))
             ->only($jours->map(fn (Carbon $j) => $j->toDateString())->all());
 
         $droitsParJour = collect();

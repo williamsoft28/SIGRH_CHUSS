@@ -86,5 +86,23 @@ class DemoDataSeeder extends Seeder
             ]
         );
         $controleur->assignRole('controleur');
+
+        $hotellerie = User::firstOrCreate(
+            ['email' => 'hotellerie@chuss.cd'],
+            [
+                'name' => 'Service Hôtellerie',
+                'password' => 'password',
+            ]
+        );
+        $hotellerie->assignRole('service_hotellerie');
+
+        $prestataire = User::firstOrCreate(
+            ['email' => 'prestataire@chuss.cd'],
+            [
+                'name' => 'Prestataire Restauration',
+                'password' => 'password',
+            ]
+        );
+        $prestataire->assignRole('prestataire');
     }
 }
