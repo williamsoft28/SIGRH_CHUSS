@@ -70,22 +70,21 @@ class SusDeclarationPatientController extends Controller
             ])->withInput();
         }
 
-        $regimesInput = $request->input('regimes', []);
         $maladesInput = $request->input('malades', []);
 
         $erreurs = [];
         $enregistrees = 0;
 
-        foreach ($regimesInput as $regimeId => $nombre) {
-            $nombrePlats = (int) $nombre;
-            $nombreMalades = (int) ($maladesInput[$regimeId] ?? 0);
+        foreach ($maladesInput as $regimeId => $nombre) {
+            $nombreMalades = (int) $nombre;
+            $nombrePlats = $nombreMalades; // Use the same value for both since we merged them into one field
 
-            if ($nombrePlats < 0 || $nombreMalades < 0) {
+            if ($nombreMalades < 0) {
                 $erreurs[] = "Les valeurs pour le régime ID $regimeId sont invalides.";
                 continue;
             }
 
-            if ($nombrePlats > 0 || $nombreMalades > 0) {
+            if ($nombreMalades > 0) {
                 DeclarationPatient::updateOrCreate(
                     [
                         'service_id' => $service->id,
@@ -100,7 +99,6 @@ class SusDeclarationPatientController extends Controller
                 );
                 $enregistrees++;
             } else {
-                // Si les deux nombres sont 0, on peut supprimer l'enregistrement s'il existait
                 DeclarationPatient::where('service_id', $service->id)
                     ->whereDate('date_repas', $date->toDateString())
                     ->where('regime_special_id', $regimeId)

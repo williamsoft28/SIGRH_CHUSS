@@ -22,7 +22,7 @@
                         <tr class="hover:bg-white/60 transition-colors duration-200 group">
                             <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Repas') }}</th>
                             <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Plat') }}</th>
-                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Sauce') }}</th>
+                            
                             <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Viande') }}</th>
                             <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Dessert') }}</th>
                         </tr>
@@ -38,54 +38,52 @@
 
                                 @if ($lecture)
                                     <td class="px-3 py-2 text-sm text-gray-700">{{ $platsDisponibles->firstWhere('id', $selection['plat_id'] ?? null)->nom ?? '—' }}</td>
-                                    <td class="px-3 py-2 text-sm text-gray-700">{{ $sauces->firstWhere('id', $selection['sauce_id'] ?? null)->nom ?? '—' }}</td>
-                                    <td class="px-3 py-2 text-sm text-gray-700">{{ $viandes->firstWhere('id', $selection['viande_id'] ?? null)->nom ?? '—' }}</td>
-                                    <td class="px-3 py-2 text-sm text-gray-700">{{ $desserts->firstWhere('id', $selection['dessert_id'] ?? null)->nom ?? '—' }}</td>
+                                    @if ($typeRepas === 'petit_dejeuner')
+                                        <td class="px-3 py-2 text-sm text-gray-400 italic text-center bg-gray-50">—</td>
+                                        <td class="px-3 py-2 text-sm text-gray-400 italic text-center bg-gray-50">—</td>
+                                    @else
+                                        <td class="px-3 py-2 text-sm text-gray-700">{{ $viandes->firstWhere('id', $selection['viande_id'] ?? null)->nom ?? '—' }}</td>
+                                        <td class="px-3 py-2 text-sm text-gray-700">{{ $desserts->firstWhere('id', $selection['dessert_id'] ?? null)->nom ?? '—' }}</td>
+                                    @endif
                                 @else
                                     <td class="px-3 py-2">
                                         <select name="repas[{{ $dateStr }}][{{ $typeRepas }}][plat_id]"
                                             class="block w-full text-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                                            <option value="">—</option>
+                                            <option value="">Sélectionnez un plat...</option>
                                             @foreach ($platsDisponibles as $plat)
-                                                <option value="{{ $plat->id }}" @selected(($selection['plat_id'] ?? null) == $plat->id)>
+                                                <option value="{{ $plat->id }}" @selected(old("repas.{$dateStr}.{$typeRepas}.plat_id", $selection['plat_id'] ?? null) == $plat->id)>
                                                     {{ $plat->nom }}
                                                 </option>
                                             @endforeach
                                         </select>
                                     </td>
-                                    <td class="px-3 py-2">
-                                        <select name="repas[{{ $dateStr }}][{{ $typeRepas }}][sauce_id]"
-                                            class="block w-full text-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                                            <option value="">—</option>
-                                            @foreach ($sauces as $sauce)
-                                                <option value="{{ $sauce->id }}" @selected(($selection['sauce_id'] ?? null) == $sauce->id)>
-                                                    {{ $sauce->nom }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                    <td class="px-3 py-2">
-                                        <select name="repas[{{ $dateStr }}][{{ $typeRepas }}][viande_id]"
-                                            class="block w-full text-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                                            <option value="">—</option>
-                                            @foreach ($viandes as $viande)
-                                                <option value="{{ $viande->id }}" @selected(($selection['viande_id'] ?? null) == $viande->id)>
-                                                    {{ $viande->nom }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                    <td class="px-3 py-2">
-                                        <select name="repas[{{ $dateStr }}][{{ $typeRepas }}][dessert_id]"
-                                            class="block w-full text-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                                            <option value="">—</option>
-                                            @foreach ($desserts as $dessert)
-                                                <option value="{{ $dessert->id }}" @selected(($selection['dessert_id'] ?? null) == $dessert->id)>
-                                                    {{ $dessert->nom }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </td>
+                                    @if ($typeRepas === 'petit_dejeuner')
+                                        <td class="px-3 py-2 text-sm text-gray-400 italic text-center bg-gray-50">N/A</td>
+                                        <td class="px-3 py-2 text-sm text-gray-400 italic text-center bg-gray-50">N/A</td>
+                                    @else
+                                        <td class="px-3 py-2">
+                                            <select name="repas[{{ $dateStr }}][{{ $typeRepas }}][viande_id]"
+                                                class="block w-full text-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                                <option value="">—</option>
+                                                @foreach ($viandes as $viande)
+                                                    <option value="{{ $viande->id }}" @selected(old("repas.{$dateStr}.{$typeRepas}.viande_id", $selection['viande_id'] ?? null) == $viande->id)>
+                                                        {{ $viande->nom }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                        <td class="px-3 py-2">
+                                            <select name="repas[{{ $dateStr }}][{{ $typeRepas }}][dessert_id]"
+                                                class="block w-full text-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                                <option value="">—</option>
+                                                @foreach ($desserts as $dessert)
+                                                    <option value="{{ $dessert->id }}" @selected(old("repas.{$dateStr}.{$typeRepas}.dessert_id", $selection['dessert_id'] ?? null) == $dessert->id)>
+                                                        {{ $dessert->nom }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                    @endif
                                 @endif
                             </tr>
                         @endforeach

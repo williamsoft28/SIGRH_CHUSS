@@ -36,7 +36,7 @@
                                         <thead class="bg-gray-50">
                                             <tr>
                                                 <th class="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider">Régime Spécial</th>
-                                                <th class="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre de Plats</th>
+                                                <th class="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
                                                 <th class="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider">Déclaré par</th>
                                             </tr>
                                         </thead>
@@ -51,7 +51,7 @@
                                         </tbody>
                                         <tfoot class="bg-gray-50">
                                             <tr>
-                                                <th class="px-4 py-2 text-sm font-bold text-gray-900 text-right">Total Plats:</th>
+                                                <th class="px-4 py-2 text-sm font-bold text-gray-900 text-right">Total:</th>
                                                 <td class="px-4 py-2 whitespace-nowrap text-sm font-bold text-gray-900">{{ $decls->sum('nombre_plats') }}</td>
                                                 <td></td>
                                             </tr>
@@ -64,7 +64,7 @@
                         <div class="mt-8 pt-4 border-t-2 border-gray-200">
                             <div class="flex justify-between items-center text-lg font-bold text-gray-900">
                                 <span>Total Général pour le CHUSS:</span>
-                                <span>{{ $declarations->sum('nombre_plats') }} Plats</span>
+                                <span>{{ $declarations->sum('nombre_plats') }}</span>
                             </div>
                         </div>
                     </div>

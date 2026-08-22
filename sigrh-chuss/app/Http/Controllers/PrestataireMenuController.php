@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Menu;
 use App\Models\Plat;
-use App\Models\Sauce;
+
 use App\Models\Viande;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -43,7 +43,7 @@ class PrestataireMenuController extends Controller
     {
         $menu->load([
             'menuJours.repas.plat',
-            'menuJours.repas.sauce',
+
             'menuJours.repas.viande',
             'menuJours.repas.dessert',
             'observations' => fn ($q) => $q->orderByDesc('date_emission'),
@@ -57,7 +57,7 @@ class PrestataireMenuController extends Controller
             foreach ($menuJour->repas as $repas) {
                 $repasExistant[$dateStr][$repas->type_repas] = [
                     'plat_id' => $repas->plat_id,
-                    'sauce_id' => $repas->sauce_id,
+
                     'viande_id' => $repas->viande_id,
                     'dessert_id' => $repas->dessert_id,
                 ];
@@ -70,7 +70,7 @@ class PrestataireMenuController extends Controller
                 'platsPetitDej' => Plat::where('type', 'petit_dejeuner')->orderBy('nom')->get(),
                 'platsBase' => Plat::where('type', 'plat_base')->orderBy('nom')->get(),
                 'desserts' => Plat::where('type', 'dessert')->orderBy('nom')->get(),
-                'sauces' => Sauce::orderBy('nom')->get(),
+
                 'viandes' => Viande::orderBy('nom')->get(),
             ]
         ));
@@ -97,6 +97,98 @@ class PrestataireMenuController extends Controller
     }
 
     /**
+     * Enregistre les modifications de la grille et une observation optionnelle.
+     */
+    public function update(Request $request, Menu $menu): RedirectResponse
+    {
+        abort_unless($menu->statut === 'soumis', 409, "Ce menu n'est plus ouvert aux observations.");
+
+        $data = $request->validate([
+            'repas' => ['required', 'array'],
+            'repas.*' => ['required', 'array'],
+            'repas.*.*.plat_id' => ['required', 'exists:plats,id'],
+
+            'repas.*.*.viande_id' => ['nullable', 'exists:viandes,id'],
+            'repas.*.*.dessert_id' => ['nullable', 'exists:plats,id'],
+            'contenu' => ['nullable', 'string'],
+        ], [
+            'repas.*.*.plat_id.required' => 'Vous devez sélectionner un plat principal pour chaque repas.',
+        ]);
+
+        $changements = [];
+        $plats = \App\Models\Plat::pluck('nom', 'id');
+
+        $viandes = \App\Models\Viande::pluck('nom', 'id');
+
+        $libellesRepas = [
+            'petit_dejeuner' => 'Petit-déjeuner',
+            'dejeuner' => 'Déjeuner',
+            'diner' => 'Dîner',
+        ];
+
+        foreach (range(0, 6) as $i) {
+            $jourDate = $menu->date_debut->copy()->addDays($i);
+            $dateStr = $jourDate->toDateString();
+            $nomJour = ucfirst($jourDate->locale('fr')->translatedFormat('l d/m'));
+
+            $menuJour = $menu->menuJours()->firstOrCreate(
+                ['date_jour' => $dateStr],
+                ['jour_semaine' => ucfirst($jourDate->locale('fr')->translatedFormat('l'))]
+            );
+
+            foreach (['petit_dejeuner', 'dejeuner', 'diner'] as $typeRepas) {
+                $selection = $data['repas'][$dateStr][$typeRepas] ?? [];
+                
+                $repasExistant = $menuJour->repas()->where('type_repas', $typeRepas)->first();
+
+                $checkChange = function($idAncien, $idNouveau, $collection, $libelleChamp) use (&$changements, $nomJour, $libellesRepas, $typeRepas) {
+                    if ($idAncien != $idNouveau) {
+                        $nomAncien = $idAncien ? ($collection[$idAncien] ?? 'Inconnu') : 'Rien';
+                        $nomNouveau = $idNouveau ? ($collection[$idNouveau] ?? 'Inconnu') : 'Rien';
+                        $changements[] = "• {$nomJour} ({$libellesRepas[$typeRepas]}) : {$libelleChamp} modifié ('{$nomAncien}' ➔ '{$nomNouveau}')";
+                    }
+                };
+
+                $checkChange($repasExistant?->plat_id, $selection['plat_id'] ?? null, $plats, 'Plat');
+
+                $checkChange($repasExistant?->viande_id, $selection['viande_id'] ?? null, $viandes, 'Viande');
+                $checkChange($repasExistant?->dessert_id, $selection['dessert_id'] ?? null, $plats, 'Dessert');
+
+                $menuJour->repas()->updateOrCreate(
+                    ['type_repas' => $typeRepas],
+                    [
+                        'plat_id' => $selection['plat_id'] ?? null,
+
+                        'viande_id' => $selection['viande_id'] ?? null,
+                        'dessert_id' => $selection['dessert_id'] ?? null,
+                    ]
+                );
+            }
+        }
+
+        // Créer une observation automatique si le système a détecté des changements dans la grille
+        if (count($changements) > 0) {
+            $contenuAuto = "⚠️ Le prestataire a modifié la composition du menu :\n" . implode("\n", $changements);
+            $menu->observations()->create([
+                'contenu' => $contenuAuto,
+                'date_emission' => now(),
+                'statut' => 'ouverte',
+            ]);
+        }
+
+        // Enregistrer l'observation textuelle du prestataire s'il en a écrit une
+        if (!empty($data['contenu'])) {
+            $menu->observations()->create([
+                'contenu' => $data['contenu'],
+                'date_emission' => now(),
+                'statut' => 'ouverte',
+            ]);
+        }
+
+        return back()->with('status', 'Modifications enregistrées avec succès.');
+    }
+
+    /**
      * Envoie les observations au service hôtellerie : fait passer le menu
      * au statut "en_observation".
      */
@@ -104,14 +196,13 @@ class PrestataireMenuController extends Controller
     {
         abort_unless($menu->statut === 'soumis', 409, "Ce menu n'est plus ouvert aux observations.");
 
-        if ($menu->observations()->count() === 0) {
-            return back()->withErrors(['observations' => 'Ajoutez au moins une observation avant d’envoyer.']);
-        }
-
+        // Allow sending even if no observations exist, since they could have just modified the menu grid directly
+        // The previous code blocked sending if count === 0, but now that they can edit the menu, 
+        // they might not need to leave a text observation.
         $menu->update(['statut' => 'en_observation']);
 
         return redirect()
             ->route('prestataire.menus.index')
-            ->with('status', 'Observations envoyées au service hôtellerie.');
+            ->with('status', 'Menu renvoyé au service hôtellerie.');
     }
 }

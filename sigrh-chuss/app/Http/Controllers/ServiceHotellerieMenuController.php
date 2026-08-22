@@ -22,9 +22,17 @@ class ServiceHotellerieMenuController extends Controller
      */
     public function index(): View
     {
-        $menus = Menu::orderByDesc('annee')->orderByDesc('numero_semaine')->paginate(20);
+        $nouveaux = Menu::where('statut', 'en_observation')
+            ->orderByDesc('annee')
+            ->orderByDesc('numero_semaine')
+            ->get();
+            
+        $menus = Menu::where('statut', '!=', 'en_observation')
+            ->orderByDesc('annee')
+            ->orderByDesc('numero_semaine')
+            ->paginate(20);
 
-        return view('hotellerie.menus.index', compact('menus'));
+        return view('hotellerie.menus.index', compact('menus', 'nouveaux'));
     }
 
     /**
@@ -115,7 +123,7 @@ class ServiceHotellerieMenuController extends Controller
                 'menu' => $menu,
                 'jours' => collect(range(0, 6))->map(fn (int $i) => $menu->date_debut->copy()->addDays($i)),
                 'repasExistant' => $this->repasExistant($menu),
-                'peutModifier' => in_array($menu->statut, ['soumis', 'en_observation', 'applique'], true),
+                'peutModifier' => in_array($menu->statut, ['soumis', 'en_observation'], true),
             ],
             $this->listesReference()
         ));
@@ -130,27 +138,9 @@ class ServiceHotellerieMenuController extends Controller
         $data = $this->validerGrille($request);
 
         if ($menu->statut === 'applique') {
-            if ($menu->nb_modifications >= 1) {
-                return back()->withErrors([
-                    'modification' => "Le menu ne peut être modifié plus d'une fois par semaine.",
-                ]);
-            }
-
-            $prochainJour = $menu->menuJours()
-                ->where('date_jour', '>=', today())
-                ->orderBy('date_jour')
-                ->first();
-
-            if ($prochainJour && now()->addHours(24)->gt($prochainJour->date_jour->copy()->startOfDay())) {
-                return back()->withErrors([
-                    'modification' => 'Préavis de 24h non respecté.',
-                ]);
-            }
-
-            $this->enregistrerGrille($menu, $data['repas'] ?? []);
-            $menu->increment('nb_modifications');
-
-            return redirect()->route('hotellerie.menus.show', $menu)->with('status', 'Menu modifié avec succès.');
+            return back()->withErrors([
+                'statut' => "Le menu final a été validé et ne peut plus être modifié pour cette semaine.",
+            ]);
         }
 
         if (in_array($menu->statut, ['soumis', 'en_observation'], true)) {
@@ -203,14 +193,18 @@ class ServiceHotellerieMenuController extends Controller
      */
     private function validerGrille(Request $request, array $reglesSupplementaires = []): array
     {
-        return $request->validate(array_merge($reglesSupplementaires, [
-            'repas' => ['nullable', 'array'],
-            'repas.*' => ['array'],
-            'repas.*.*.plat_id' => ['nullable', 'exists:plats,id'],
-            'repas.*.*.sauce_id' => ['nullable', 'exists:sauces,id'],
-            'repas.*.*.viande_id' => ['nullable', 'exists:viandes,id'],
-            'repas.*.*.dessert_id' => ['nullable', 'exists:plats,id'],
-        ]));
+        return $request->validate(
+            array_merge($reglesSupplementaires, [
+                'repas' => ['required', 'array'],
+                'repas.*' => ['required', 'array'],
+                'repas.*.*.plat_id' => ['required', 'exists:plats,id'],
+                'repas.*.*.viande_id' => ['nullable', 'exists:viandes,id'],
+                'repas.*.*.dessert_id' => ['nullable', 'exists:plats,id'],
+            ]),
+            [
+                'repas.*.*.plat_id.required' => 'Vous devez sélectionner un plat principal pour chaque repas de la semaine (Petit-déjeuner, Déjeuner, Dîner).',
+            ]
+        );
     }
 
     /**
@@ -236,7 +230,6 @@ class ServiceHotellerieMenuController extends Controller
                     ['type_repas' => $typeRepas],
                     [
                         'plat_id' => $selection['plat_id'] ?? null,
-                        'sauce_id' => $selection['sauce_id'] ?? null,
                         'viande_id' => $selection['viande_id'] ?? null,
                         'dessert_id' => $selection['dessert_id'] ?? null,
                     ]
@@ -264,7 +257,6 @@ class ServiceHotellerieMenuController extends Controller
             foreach ($menuJour->repas as $repas) {
                 $resultat[$dateStr][$repas->type_repas] = [
                     'plat_id' => $repas->plat_id,
-                    'sauce_id' => $repas->sauce_id,
                     'viande_id' => $repas->viande_id,
                     'dessert_id' => $repas->dessert_id,
                 ];

@@ -37,10 +37,38 @@ class AdminBeneficiaireController extends Controller
         $date = $request->date('date') ?? today();
 
         $declarations = DeclarationJour::query()
-            ->whereDate('date_repas', $date->toDateString())
-            ->with(['beneficiaire.service'])
+            ->where(function ($query) use ($date) {
+                $query->where(function ($q) use ($date) {
+                    $q->where('type_periode', 'quotidien')
+                      ->whereDate('date_repas', $date->toDateString());
+                })
+                ->orWhere(function ($q) use ($date) {
+                    $q->whereIn('type_periode', ['hebdomadaire', 'mensuel'])
+                      ->whereHas('bonRepas.droits', function ($q2) use ($date) {
+                          $q2->whereDate('date', $date->toDateString());
+                      });
+                })
+                ->orWhere(function ($q) use ($date) {
+                    $q->whereIn('type_periode', ['hebdomadaire', 'mensuel'])
+                      ->whereDoesntHave('bonRepas')
+                      ->whereDate('date_debut', '<=', $date->toDateString())
+                      ->whereDate('date_fin', '>=', $date->toDateString());
+                });
+            })
+            ->with(['beneficiaire.service', 'bonRepas.droits' => function($q) use ($date) {
+                $q->whereDate('date', $date->toDateString());
+            }])
             ->orderBy('statut')
             ->get();
+
+        // Adjust meals for display if rights exist for the day
+        foreach ($declarations as $declaration) {
+            if ($declaration->bonRepas && $declaration->bonRepas->droits->isNotEmpty()) {
+                $declaration->repas_jour = $declaration->bonRepas->droits->pluck('type_repas')->unique()->toArray();
+            } else {
+                $declaration->repas_jour = $declaration->repas;
+            }
+        }
 
         return view('admin.beneficiaires.jour', compact('declarations', 'date'));
     }

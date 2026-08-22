@@ -23,9 +23,9 @@ Route::get('/', function () {
 Route::get('/bons/{codeUnique}', [BonPublicController::class, 'show'])->name('bons.public');
 Route::get('/bons/{codeUnique}/telecharger', [BonPublicController::class, 'telecharger'])->name('bons.public.telecharger');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -125,6 +125,7 @@ Route::middleware(['auth', 'role:prestataire'])->prefix('prestataire')->name('pr
     Route::get('/menus', [PrestataireMenuController::class, 'index'])->name('menus.index');
     Route::get('/menus/historique', [PrestataireMenuController::class, 'historique'])->name('menus.historique');
     Route::get('/menus/{menu}', [PrestataireMenuController::class, 'show'])->name('menus.show');
+    Route::put('/menus/{menu}', [PrestataireMenuController::class, 'update'])->name('menus.update');
     Route::post('/menus/{menu}/observations', [PrestataireMenuController::class, 'storeObservation'])->name('menus.observations.store');
     Route::post('/menus/{menu}/envoyer', [PrestataireMenuController::class, 'envoyerObservations'])->name('menus.envoyer');
 });
@@ -142,6 +143,10 @@ Route::middleware(['auth', 'role:super_administrateur'])->prefix('super-admin')-
     Route::post('/derogations/{derogation}/autoriser', [AdminDerogationController::class, 'autoriser'])->name('derogations.autoriser');
     Route::post('/derogations/{derogation}/refuser', [AdminDerogationController::class, 'refuser'])->name('derogations.refuser');
     Route::delete('/derogations/{derogation}', [AdminDerogationController::class, 'destroy'])->name('derogations.destroy');
+});
+
+Route::middleware(['auth', 'role:service_hotellerie|prestataire'])->group(function () {
+    Route::get('/menus/{menu}/telecharger', [\App\Http\Controllers\MenuDownloadController::class, 'download'])->name('menus.telecharger');
 });
 
 require __DIR__.'/auth.php';

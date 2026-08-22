@@ -21,6 +21,45 @@
                 </a>
             </div>
 
+            @if($nouveaux->count() > 0)
+            <div class="mb-8">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('Nouveaux retours (À valider)') }}</h3>
+                <div class="bg-white/80 backdrop-blur-xl overflow-hidden shadow-float rounded-2xl border border-red-300">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="bg-red-50 border-b border-red-100">
+                                <tr>
+                                    <th class="px-6 py-4 text-xs font-bold text-red-800 uppercase tracking-wider">{{ __('Semaine') }}</th>
+                                    <th class="px-6 py-4 text-xs font-bold text-red-800 uppercase tracking-wider">{{ __('Période') }}</th>
+                                    <th class="px-6 py-4 text-xs font-bold text-red-800 uppercase tracking-wider">{{ __('Statut') }}</th>
+                                    <th class="px-6 py-3"></th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100/50">
+                                @foreach ($nouveaux as $menu)
+                                    <tr class="hover:bg-red-50/50 transition-colors duration-200">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">S{{ $menu->numero_semaine }} / {{ $menu->annee }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                            {{ $menu->date_debut->format('d/m/Y') }} &rarr; {{ $menu->date_fin->format('d/m/Y') }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                            <x-menu-statut-badge :statut="$menu->statut" />
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                                            <a href="{{ route('hotellerie.menus.show', $menu) }}" class="text-indigo-600 hover:text-indigo-900 font-bold">
+                                                {{ __('Ouvrir et Valider') }}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('Tous les menus') }}</h3>
             <div class="bg-white/80 backdrop-blur-xl overflow-hidden shadow-float rounded-2xl border border-white/60">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">

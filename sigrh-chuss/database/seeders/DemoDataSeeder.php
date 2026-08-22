@@ -60,6 +60,20 @@ class DemoDataSeeder extends Seeder
             ]
         );
 
+        $regimes = [
+            ['code_regime' => 'NORMAL', 'libelle' => 'Régime Normal', 'type_regime' => 'Standard'],
+            ['code_regime' => 'SANS_SEL', 'libelle' => 'Sans Sel', 'type_regime' => 'Thérapeutique'],
+            ['code_regime' => 'DIABETIQUE', 'libelle' => 'Diabétique', 'type_regime' => 'Thérapeutique'],
+            ['code_regime' => 'HYPERPROTEINE', 'libelle' => 'Hyperprotéiné', 'type_regime' => 'Thérapeutique'],
+        ];
+
+        foreach ($regimes as $regime) {
+            \App\Models\RegimeSpecial::firstOrCreate(
+                ['code_regime' => $regime['code_regime']],
+                ['libelle' => $regime['libelle'], 'type_regime' => $regime['type_regime']]
+            );
+        }
+
         Beneficiaire::firstOrCreate(
             ['service_id' => $cardiologie->id, 'nom' => 'Jean Kalonji'],
             [

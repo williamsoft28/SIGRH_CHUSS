@@ -26,15 +26,15 @@
                 </div>
 
                 <!-- Stats Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <!-- Stat Card 1 -->
                     <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow group relative overflow-hidden">
                         <div class="absolute -right-6 -top-6 w-24 h-24 bg-chuss-amber/10 rounded-full blur-xl group-hover:bg-chuss-amber/20 transition-colors"></div>
                         <div class="flex justify-between items-start relative z-10">
                             <div>
-                                <p class="text-sm font-semibold text-chuss-gray uppercase tracking-wider mb-1">Bénéficiaires</p>
+                                <p class="text-sm font-semibold text-chuss-gray uppercase tracking-wider mb-1">Personnel</p>
                                 <h4 class="text-3xl font-bold text-chuss-dark">
-                                    {{ class_exists('\App\Models\Beneficiaire') ? \App\Models\Beneficiaire::count() : '...' }}
+                                    {{ $personnelDuJourCount ?? 0 }}
                                 </h4>
                             </div>
                             <div class="w-10 h-10 rounded-full bg-chuss-amber/10 flex items-center justify-center text-chuss-amber">
@@ -43,8 +43,18 @@
                                 </svg>
                             </div>
                         </div>
-                        <div class="mt-4 flex items-center text-sm text-green-600 font-medium">
-                            <span>Total enregistrés</span>
+                        <div class="mt-4 flex flex-col border-t border-gray-100 pt-3">
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Détail par régime</p>
+                            <div class="space-y-1">
+                                @forelse($personnelParRegime as $regime => $count)
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="text-gray-600">{{ $regime }}</span>
+                                        <span class="font-bold text-chuss-dark bg-gray-100 px-2 py-0.5 rounded-full text-xs">{{ $count }}</span>
+                                    </div>
+                                @empty
+                                    <span class="text-xs text-gray-400">Aucun régime enregistré pour le personnel</span>
+                                @endforelse
+                            </div>
                         </div>
                     </div>
 
@@ -53,61 +63,29 @@
                         <div class="absolute -right-6 -top-6 w-24 h-24 bg-red-500/10 rounded-full blur-xl group-hover:bg-red-500/20 transition-colors"></div>
                         <div class="flex justify-between items-start relative z-10">
                             <div>
-                                <p class="text-sm font-semibold text-chuss-gray uppercase tracking-wider mb-1">Déclarations</p>
+                                <p class="text-sm font-semibold text-chuss-gray uppercase tracking-wider mb-1">Malades</p>
                                 <h4 class="text-3xl font-bold text-chuss-dark">
-                                    {{ class_exists('\App\Models\Declaration') ? \App\Models\Declaration::count() : '...' }}
+                                    {{ $maladesDuJourCount ?? 0 }}
                                 </h4>
                             </div>
                             <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                  <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd" />
                                 </svg>
                             </div>
                         </div>
-                        <div class="mt-4 flex items-center text-sm text-chuss-gray font-medium">
-                            <span>Déclarations reçues</span>
-                        </div>
-                    </div>
-
-                    <!-- Stat Card 3 -->
-                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow group relative overflow-hidden">
-                        <div class="absolute -right-6 -top-6 w-24 h-24 bg-blue-500/10 rounded-full blur-xl group-hover:bg-blue-500/20 transition-colors"></div>
-                        <div class="flex justify-between items-start relative z-10">
-                            <div>
-                                <p class="text-sm font-semibold text-chuss-gray uppercase tracking-wider mb-1">Comptes SUS</p>
-                                <h4 class="text-3xl font-bold text-chuss-dark">
-                                    {{ class_exists('\App\Models\Sus') ? \App\Models\Sus::count() : '...' }}
-                                </h4>
+                        <div class="mt-4 flex flex-col border-t border-gray-100 pt-3">
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Détail par régime</p>
+                            <div class="space-y-1">
+                                @forelse($maladesParRegime as $regime => $count)
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="text-gray-600">{{ $regime }}</span>
+                                        <span class="font-bold text-chuss-dark bg-gray-100 px-2 py-0.5 rounded-full text-xs">{{ $count }}</span>
+                                    </div>
+                                @empty
+                                    <span class="text-xs text-gray-400">Aucun régime enregistré pour les malades</span>
+                                @endforelse
                             </div>
-                            <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-500">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                  <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="mt-4 flex items-center text-sm text-chuss-gray font-medium">
-                            <span>Services d'urgence</span>
-                        </div>
-                    </div>
-
-                    <!-- Stat Card 4 -->
-                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow group relative overflow-hidden">
-                        <div class="absolute -right-6 -top-6 w-24 h-24 bg-purple-500/10 rounded-full blur-xl group-hover:bg-purple-500/20 transition-colors"></div>
-                        <div class="flex justify-between items-start relative z-10">
-                            <div>
-                                <p class="text-sm font-semibold text-chuss-gray uppercase tracking-wider mb-1">Zones</p>
-                                <h4 class="text-3xl font-bold text-chuss-dark">
-                                    {{ class_exists('\App\Models\Zone') ? \App\Models\Zone::count() : '...' }}
-                                </h4>
-                            </div>
-                            <div class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-500">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                  <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="mt-4 flex items-center text-sm text-chuss-gray font-medium">
-                            <span>Zones configurées</span>
                         </div>
                     </div>
                 </div>

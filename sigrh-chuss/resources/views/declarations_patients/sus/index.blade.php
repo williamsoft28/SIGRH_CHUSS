@@ -28,8 +28,7 @@
                             <tr class="hover:bg-white/60 transition-colors duration-200 group">
                                 <th class="px-6 py-4 text-xs font-bold text-chuss-dark uppercase tracking-wider">{{ __('Date') }}</th>
                                 <th class="px-6 py-4 text-xs font-bold text-chuss-dark uppercase tracking-wider">{{ __('Régime Spécial') }}</th>
-                                <th class="px-6 py-4 text-xs font-bold text-chuss-dark uppercase tracking-wider">{{ __('Nombre de Malades') }}</th>
-                                <th class="px-6 py-4 text-xs font-bold text-chuss-dark uppercase tracking-wider">{{ __('Nombre de Plats') }}</th>
+                                <th class="px-6 py-4 text-xs font-bold text-chuss-dark uppercase tracking-wider">{{ __('Nombre') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100/50">
@@ -41,9 +40,6 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-bold">
                                         {{ $declaration->nombre_malades }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-bold">
-                                        {{ $declaration->nombre_plats }}
                                     </td>
                                 </tr>
                             @empty

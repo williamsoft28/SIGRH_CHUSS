@@ -1,0 +1,19 @@
+Mot de passe universel : password
+
+🛡️ Super Administrateur (Gestion globale et Dérogations)
+Email : superadmin@chuss.cd
+Rôle : Peut gérer les utilisateurs, les années et désormais débloquer/rebloquer les dérogations.
+⚙️ Administrateur (Gestion courante)
+Email : admin@chuss.cd
+Rôle : Valide les déclarations, suit l'hôtellerie, le suivi médical, etc.
+🏥 SUS (Responsable de service - ex: Cardiologie)
+Email : sus.cardiologie@chuss.cd
+Rôle : Déclare les patients, gère les bénéficiaires et demande les dérogations.
+🍽️ Service Hôtellerie
+Email : hotellerie@chuss.cd
+Rôle : Établit et gère les menus.
+👨‍🍳 Prestataire (Cuisine / Restauration)
+Email : prestataire@chuss.cd
+Rôle : Consulte les menus, ajoute des observations.
+📱 Contrôleur (Scan des bons)
+Email : controleur@chuss.cd

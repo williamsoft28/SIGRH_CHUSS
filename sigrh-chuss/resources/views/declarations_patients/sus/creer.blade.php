@@ -45,24 +45,15 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             @foreach($regimes as $regime)
                                 @php
-                                    $valeurExistante = isset($declarationsExistantes[$regime->id]) ? $declarationsExistantes[$regime->id]->nombre_plats : 0;
                                     $maladesExistants = isset($declarationsExistantes[$regime->id]) ? $declarationsExistantes[$regime->id]->nombre_malades : 0;
                                 @endphp
                                 <div class="flex flex-col border border-gray-200 p-3 rounded-md space-y-2">
                                     <div class="text-sm font-medium text-gray-700">{{ $regime->libelle }}</div>
                                     <div class="flex items-center justify-between">
-                                        <label for="malades_{{ $regime->id }}" class="text-xs text-gray-500">Nbr Malades</label>
+                                        <label for="malades_{{ $regime->id }}" class="text-xs text-gray-500">Nombre</label>
                                         <input type="number" id="malades_{{ $regime->id }}" name="malades[{{ $regime->id }}]" 
                                                class="w-20 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-center text-sm"
                                                value="{{ old('malades.'.$regime->id, $maladesExistants) }}" 
-                                               min="0"
-                                               @if(!$ouverte) disabled @endif>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <label for="regime_{{ $regime->id }}" class="text-xs text-gray-500">Nbr Plats</label>
-                                        <input type="number" id="regime_{{ $regime->id }}" name="regimes[{{ $regime->id }}]" 
-                                               class="w-20 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-center text-sm"
-                                               value="{{ old('regimes.'.$regime->id, $valeurExistante) }}" 
                                                min="0"
                                                @if(!$ouverte) disabled @endif>
                                     </div>

@@ -36,7 +36,7 @@
                                     <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ $declaration->beneficiaire->service?->nom ?? '—' }}</td>
                                     <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ $declaration->beneficiaire->nom }}</td>
                                     <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {{ collect($declaration->repas)->map(fn ($r) => str_replace('_', ' ', $r))->implode(', ') }}
+                                        {{ collect($declaration->repas_jour)->map(fn ($r) => str_replace('_', ' ', $r))->implode(', ') }}
                                     </td>
                                     <td class="px-4 py-4 whitespace-nowrap text-sm">
                                         <x-declaration-statut-badge :statut="$declaration->statut" />
