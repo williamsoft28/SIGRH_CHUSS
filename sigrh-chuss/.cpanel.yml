@@ -1,5 +1,11 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/c2820771c/public_html/sigrh/
-    - /usr/bin/rsync -a --delete --exclude='.git/' ./ $DEPLOYPATH
+    - export DEPLOYPATH=/home/c2820771c/repositories/SIGRH_CHUSS
+    - /bin/cp -R * $DEPLOYPATH
+    - cd $DEPLOYPATH
+    - composer install --no-dev
+    - php artisan migrate --force
+    - php artisan config:cache
+    - php artisan route:cache
+    - php artisan view:cache
