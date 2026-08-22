@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/c2820771c/public_html/sigrh/
+    - /usr/bin/rsync -a --delete --exclude='.git/' ./ $DEPLOYPATH
