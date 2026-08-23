@@ -177,4 +177,49 @@ Route::get('/force-admin', function () {
     }
 });
 
+Route::get('/debug', function () {
+    try {
+        // 1. Vider le cache de configuration pour prendre en compte le QUEUE_CONNECTION=sync
+        \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+        \Illuminate\Support\Facades\Artisan::call('config:cache');
+        
+        $output = "<h1>Diagnostic du système</h1>";
+        $output .= "<h2>1. Cache nettoyé !</h2>";
+        $output .= "<p>Les variables d'environnement (comme QUEUE_CONNECTION) sont maintenant à jour.</p>";
+
+        // 2. Vérifier les mots de passe des SUS
+        $output .= "<h2>2. Vérification des mots de passe SUS</h2>";
+        $suses = \App\Models\User::role('sus')->get();
+        if ($suses->isEmpty()) {
+            $output .= "<p>Aucun compte SUS trouvé.</p>";
+        } else {
+            $output .= "<ul>";
+            foreach ($suses as $sus) {
+                $isHashed = str_starts_with($sus->password, '$2y$');
+                $status = $isHashed ? "<span style='color:green'>Correctement sécurisé (haché)</span>" : "<span style='color:red'>ERREUR : Mot de passe en texte clair !</span>";
+                $output .= "<li>{$sus->email} : {$status}</li>";
+            }
+            $output .= "</ul>";
+        }
+
+        // 3. Test d'envoi d'email en direct
+        $output .= "<h2>3. Test SMTP (Envoi d'email)</h2>";
+        try {
+            \Illuminate\Support\Facades\Mail::raw('Ceci est un test direct depuis Render. Si vous recevez ce message, le serveur SMTP fonctionne !', function ($message) {
+                // Envoi à l'admin pour tester
+                $message->to('admin@chuss.cd')
+                        ->subject('Test SMTP Render');
+            });
+            $output .= "<p style='color:green'>✅ L'email de test a été envoyé au serveur SMTP sans planter !</p>";
+        } catch (\Exception $e) {
+            $output .= "<p style='color:red'>❌ ERREUR SMTP : " . $e->getMessage() . "</p>";
+        }
+
+        return $output;
+    } catch (\Exception $e) {
+        return '<h1>Erreur fatale:</h1><p>' . $e->getMessage() . '</p>';
+    }
+});
+
 require __DIR__.'/auth.php';
+
