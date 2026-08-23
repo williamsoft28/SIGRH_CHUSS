@@ -153,9 +153,10 @@ Route::middleware(['auth', 'role:service_hotellerie|prestataire'])->group(functi
 Route::get('/setup-render', function () {
     try {
         \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
         \Illuminate\Support\Facades\Artisan::call('config:cache');
         \Illuminate\Support\Facades\Artisan::call('view:cache');
-        return '<h1>Configuration réussie !</h1><p>Les tables ont été créées. <a href="/">Retour au site</a></p>';
+        return '<h1>Configuration réussie !</h1><p>Les tables et les données initiales ont été créées. <a href="/">Retour au site</a></p>';
     } catch (\Exception $e) {
         return '<h1>Erreur:</h1><p>' . $e->getMessage() . '</p>';
     }
