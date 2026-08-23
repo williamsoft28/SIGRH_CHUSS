@@ -1,0 +1,63 @@
+<?php
+
+namespace App\Models;
+
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
+
+#[Fillable(['name', 'nom', 'prenom', 'matricule', 'username', 'email', 'password', 'service_id'])]
+#[Hidden(['password', 'remember_token'])]
+class User extends Authenticatable
+{
+    /** @use HasFactory<UserFactory> */
+    use HasFactory, HasRoles, Notifiable;
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
+
+    /**
+     * @return BelongsTo<Service, $this>
+     */
+    public function service(): BelongsTo
+    {
+        return $this->belongsTo(Service::class);
+    }
+
+    /**
+     * Fiche de déclarant (SUS) rattachée à ce compte, le cas échéant.
+     *
+     * @return HasOne<Sus, $this>
+     */
+    public function sus(): HasOne
+    {
+        return $this->hasOne(Sus::class);
+    }
+
+    /**
+     * Visites médicales de l'agent.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function visitesMedicales()
+    {
+        return $this->hasMany(VisiteMedicale::class);
+    }
+}
