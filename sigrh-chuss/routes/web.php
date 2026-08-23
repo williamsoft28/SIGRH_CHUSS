@@ -162,4 +162,19 @@ Route::get('/setup-render', function () {
     }
 });
 
+Route::get('/force-admin', function () {
+    try {
+        $user = \App\Models\User::updateOrCreate(
+            ['email' => 'admin@chuss.cd'],
+            ['name' => 'Administrateur', 'password' => 'password']
+        );
+        // S'assurer que le rôle existe
+        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'administrateur', 'guard_name' => 'web']);
+        $user->assignRole('administrateur');
+        return '<h1>Compte Administrateur forcé !</h1><p>Email : <b>admin@chuss.cd</b><br>Mot de passe : <b>password</b></p><a href="/login">Aller se connecter</a>';
+    } catch (\Exception $e) {
+        return '<h1>Erreur:</h1><p>' . $e->getMessage() . '</p>';
+    }
+});
+
 require __DIR__.'/auth.php';
