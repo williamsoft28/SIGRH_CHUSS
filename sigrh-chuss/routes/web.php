@@ -149,4 +149,16 @@ Route::middleware(['auth', 'role:service_hotellerie|prestataire'])->group(functi
     Route::get('/menus/{menu}/telecharger', [\App\Http\Controllers\MenuDownloadController::class, 'download'])->name('menus.telecharger');
 });
 
+// Route temporaire pour configurer la base de données sur Render
+Route::get('/setup-render', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        \Illuminate\Support\Facades\Artisan::call('config:cache');
+        \Illuminate\Support\Facades\Artisan::call('view:cache');
+        return '<h1>Configuration réussie !</h1><p>Les tables ont été créées. <a href="/">Retour au site</a></p>';
+    } catch (\Exception $e) {
+        return '<h1>Erreur:</h1><p>' . $e->getMessage() . '</p>';
+    }
+});
+
 require __DIR__.'/auth.php';
