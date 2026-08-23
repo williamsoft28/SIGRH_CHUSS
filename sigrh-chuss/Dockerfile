@@ -54,5 +54,5 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 # Exposer le port 80 (Render redirigera le trafic externe vers ce port)
 EXPOSE 80
 
-# Lancer Apache
-CMD ["apache2-foreground"]
+# Lancer Apache et lier le fichier secret .env de Render avant le démarrage
+CMD /bin/sh -c "cp /etc/secrets/.env /var/www/html/.env 2>/dev/null || true; apache2-foreground"
