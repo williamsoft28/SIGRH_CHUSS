@@ -105,6 +105,71 @@ class AdminSusController extends Controller
     }
 
     /**
+     * Formulaire de modification d'un compte SUS.
+     */
+    public function edit(User $sus): View
+    {
+        abort_unless($sus->hasRole('sus'), 404);
+        $services = Service::orderBy('nom')->get();
+
+        return view('admin.sus.edit', compact('sus', 'services'));
+    }
+
+    /**
+     * Met à jour un compte SUS.
+     */
+    public function update(Request $request, User $sus): RedirectResponse
+    {
+        abort_unless($sus->hasRole('sus'), 404);
+
+        $data = $request->validate([
+            'nom' => ['required', 'string', 'max:255'],
+            'prenom' => ['required', 'string', 'max:255'],
+            'matricule' => ['required', 'string', 'max:50', 'unique:users,matricule,'.$sus->id],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$sus->id],
+            'service_id' => ['required', 'exists:services,id'],
+        ]);
+
+        $sus->update([
+            'name' => "{$data['prenom']} {$data['nom']}",
+            'nom' => $data['nom'],
+            'prenom' => $data['prenom'],
+            'matricule' => $data['matricule'],
+            'email' => $data['email'],
+            'service_id' => $data['service_id'],
+        ]);
+
+        // Mettre à jour le modèle Sus lié
+        if ($sus->sus) {
+            $sus->sus->update([
+                'service_id' => $data['service_id'],
+                'nom' => $sus->name,
+            ]);
+        }
+
+        return redirect()
+            ->route('admin.sus.index')
+            ->with('status', 'Compte SUS mis à jour avec succès.');
+    }
+
+    /**
+     * Supprime un compte SUS.
+     */
+    public function destroy(User $sus): RedirectResponse
+    {
+        abort_unless($sus->hasRole('sus'), 404);
+
+        if ($sus->sus) {
+            $sus->sus->delete();
+        }
+        $sus->delete();
+
+        return redirect()
+            ->route('admin.sus.index')
+            ->with('status', 'Compte SUS supprimé avec succès.');
+    }
+
+    /**
      * Réinitialise le mot de passe d'un compte SUS (l'identifiant ne change pas).
      */
     public function reinitialiserMotDePasse(User $sus): RedirectResponse

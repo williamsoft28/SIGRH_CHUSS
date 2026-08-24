@@ -68,13 +68,26 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500">{{ $compte->username ?? '—' }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ $compte->email }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-                                        <form method="POST" action="{{ route('admin.sus.reinitialiser-mot-de-passe', $compte) }}"
-                                              onsubmit="return confirm('{{ __('Générer un nouveau mot de passe pour ce compte ?') }}');">
-                                            @csrf
-                                            <button type="submit" class="text-indigo-600 hover:text-indigo-900">
-                                                {{ __('Réinitialiser le mot de passe') }}
-                                            </button>
-                                        </form>
+                                        <div class="flex items-center justify-end gap-3">
+                                            <a href="{{ route('admin.sus.edit', $compte) }}" class="text-chuss-green hover:text-chuss-amber font-semibold transition-colors">
+                                                {{ __('Modifier') }}
+                                            </a>
+                                            <form method="POST" action="{{ route('admin.sus.reinitialiser-mot-de-passe', $compte) }}"
+                                                  onsubmit="return confirm('{{ __('Générer un nouveau mot de passe pour ce compte ?') }}');">
+                                                @csrf
+                                                <button type="submit" class="text-indigo-600 hover:text-indigo-900 font-semibold transition-colors">
+                                                    {{ __('Réinitialiser MDP') }}
+                                                </button>
+                                            </form>
+                                            <form method="POST" action="{{ route('admin.sus.destroy', $compte) }}"
+                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce compte SUS ?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-500 hover:text-red-700 font-semibold transition-colors">
+                                                    {{ __('Supprimer') }}
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty

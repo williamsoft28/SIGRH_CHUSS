@@ -194,6 +194,20 @@ class BeneficiaireController extends Controller
     }
 
     /**
+     * Supprime un bénéficiaire.
+     */
+    public function destroy(Request $request, Beneficiaire $beneficiaire): RedirectResponse
+    {
+        $this->authorizeAccess($request, $beneficiaire);
+
+        $beneficiaire->delete();
+
+        return redirect()
+            ->route('beneficiaires.index')
+            ->with('status', 'Bénéficiaire supprimé avec succès.');
+    }
+
+    /**
      * @return array<string, mixed>
      */
     private function validatedEdition(Request $request): array

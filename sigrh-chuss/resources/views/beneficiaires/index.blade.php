@@ -48,10 +48,17 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                         {{ $beneficiaire->numero_whatsapp ?? '—' }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-                                        <a href="{{ route('beneficiaires.edit', $beneficiaire) }}" class="text-indigo-600 hover:text-indigo-900">
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm flex justify-end gap-3 items-center">
+                                        <a href="{{ route('beneficiaires.edit', $beneficiaire) }}" class="text-chuss-green font-semibold hover:text-chuss-amber transition-colors">
                                             {{ __('Modifier') }}
                                         </a>
+                                        <form method="POST" action="{{ route('beneficiaires.destroy', $beneficiaire) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce bénéficiaire ?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-500 hover:text-red-700 font-semibold transition-colors">
+                                                {{ __('Supprimer') }}
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             @empty

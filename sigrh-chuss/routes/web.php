@@ -39,6 +39,7 @@ Route::middleware(['auth', 'role:sus'])->prefix('sus')->name('beneficiaires.')->
     Route::post('/beneficiaires', [BeneficiaireController::class, 'store'])->name('store');
     Route::get('/beneficiaires/{beneficiaire}/modifier', [BeneficiaireController::class, 'edit'])->name('edit');
     Route::put('/beneficiaires/{beneficiaire}', [BeneficiaireController::class, 'update'])->name('update');
+    Route::delete('/beneficiaires/{beneficiaire}', [BeneficiaireController::class, 'destroy'])->name('destroy');
 });
 
 Route::middleware(['auth', 'role:sus'])->prefix('sus/bons')->name('beneficiaires.bons.')->group(function () {
@@ -87,6 +88,9 @@ Route::middleware(['auth', 'role:administrateur'])->prefix('admin')->name('admin
     Route::get('/sus', [AdminSusController::class, 'index'])->name('sus.index');
     Route::get('/sus/creer', [AdminSusController::class, 'create'])->name('sus.create');
     Route::post('/sus', [AdminSusController::class, 'store'])->name('sus.store');
+    Route::get('/sus/{sus}/modifier', [AdminSusController::class, 'edit'])->name('sus.edit');
+    Route::put('/sus/{sus}', [AdminSusController::class, 'update'])->name('sus.update');
+    Route::delete('/sus/{sus}', [AdminSusController::class, 'destroy'])->name('sus.destroy');
     Route::post('/sus/{sus}/reinitialiser-mot-de-passe', [AdminSusController::class, 'reinitialiserMotDePasse'])->name('sus.reinitialiser-mot-de-passe');
     
     // Zones
