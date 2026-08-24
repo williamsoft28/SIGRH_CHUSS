@@ -31,6 +31,7 @@
                                 <th class="px-6 py-4 text-xs font-bold text-chuss-dark uppercase tracking-wider">{{ __('Type') }}</th>
                                 <th class="px-6 py-4 text-xs font-bold text-chuss-dark uppercase tracking-wider">{{ __('Régime spécial') }}</th>
                                 <th class="px-6 py-4 text-xs font-bold text-chuss-dark uppercase tracking-wider">{{ __('Numéro WhatsApp') }}</th>
+                                <th class="px-6 py-4 text-xs font-bold text-chuss-dark uppercase tracking-wider">{{ __('Dernier Bon') }}</th>
                                 <th class="px-6 py-3"></th>
                             </tr>
                         </thead>
@@ -48,6 +49,23 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                         {{ $beneficiaire->numero_whatsapp ?? '—' }}
                                     </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                        @php
+                                            $dernierBon = $beneficiaire->declarationJours->first()?->bonRepas;
+                                        @endphp
+                                        @if ($dernierBon)
+                                            <div class="flex flex-col gap-1">
+                                                <span class="inline-block px-3 py-1 bg-gray-100 border border-gray-300 rounded font-mono font-bold text-chuss-dark tracking-widest text-center">
+                                                    {{ $dernierBon->code_court ?? 'Généré (Ancien)' }}
+                                                </span>
+                                                <a href="{{ route('beneficiaires.bons.show', $dernierBon) }}" class="text-indigo-600 hover:text-indigo-900 text-xs text-center font-semibold mt-1">
+                                                    {{ __('Ouvrir / Renvoyer') }} &rarr;
+                                                </a>
+                                            </div>
+                                        @else
+                                            <span class="text-gray-400 italic">{{ __('Aucun bon') }}</span>
+                                        @endif
+                                    </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm flex justify-end gap-3 items-center">
                                         <a href="{{ route('beneficiaires.edit', $beneficiaire) }}" class="text-chuss-green font-semibold hover:text-chuss-amber transition-colors">
                                             {{ __('Modifier') }}
@@ -63,7 +81,7 @@
                                 </tr>
                             @empty
                                 <tr class="hover:bg-white/60 transition-colors duration-200 group">
-                                    <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
+                                    <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
                                         {{ __("Aucun bénéficiaire enregistré pour votre service.") }}
                                     </td>
                                 </tr>

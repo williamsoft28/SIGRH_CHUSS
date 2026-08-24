@@ -22,7 +22,10 @@ class BeneficiaireController extends Controller
     {
         $beneficiaires = Beneficiaire::query()
             ->where('service_id', $request->user()->service_id)
-            ->with('regimeSpecial')
+            ->with([
+                'regimeSpecial',
+                'declarationJours' => fn ($q) => $q->latest('created_at')->with('bonRepas')
+            ])
             ->orderBy('nom')
             ->paginate(20);
 
