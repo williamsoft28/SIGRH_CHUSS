@@ -181,6 +181,20 @@ Route::get('/force-admin', function () {
     }
 });
 
+Route::get('/force-super-admin', function () {
+    try {
+        $user = \App\Models\User::updateOrCreate(
+            ['email' => 'superadmin@chuss.cd'],
+            ['name' => 'Super Administrateur', 'password' => 'password']
+        );
+        \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'super_administrateur', 'guard_name' => 'web']);
+        $user->assignRole('super_administrateur');
+        return '<h1>Compte Super Administrateur créé avec succès !</h1><p>Email : <b>superadmin@chuss.cd</b><br>Mot de passe : <b>password</b></p><a href="/login">Aller se connecter</a>';
+    } catch (\Exception $e) {
+        return '<h1>Erreur:</h1><p>' . $e->getMessage() . '</p>';
+    }
+});
+
 Route::get('/debug', function () {
     try {
         // 1. Vider le cache de configuration pour prendre en compte le QUEUE_CONNECTION=sync
