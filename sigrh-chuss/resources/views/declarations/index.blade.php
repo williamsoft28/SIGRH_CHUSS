@@ -55,9 +55,16 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                         @if ($declaration->bonRepas)
-                                            {{ __('Généré') }}
+                                            <div class="flex flex-col gap-1">
+                                                <span class="inline-block px-3 py-1 bg-gray-100 border border-gray-300 rounded font-mono font-bold text-chuss-dark tracking-widest text-center">
+                                                    {{ $declaration->bonRepas->code_court ?? 'Généré (Ancien)' }}
+                                                </span>
+                                                <a href="{{ route('beneficiaires.bons.show', $declaration->bonRepas) }}" class="text-indigo-600 hover:text-indigo-900 text-xs text-center font-semibold mt-1">
+                                                    {{ __('Ouvrir / Renvoyer le bon') }} &rarr;
+                                                </a>
+                                            </div>
                                         @else
-                                            &mdash;
+                                            <span class="text-gray-400 italic">{{ __('En attente de validation') }}</span>
                                         @endif
                                     </td>
                                 </tr>
