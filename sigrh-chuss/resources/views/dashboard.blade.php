@@ -11,8 +11,8 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            @hasrole('administrateur')
-                <!-- Admin Dashboard Section -->
+            @hasanyrole('administrateur|super_administrateur|prestataire|service_hotellerie')
+                <!-- Dashboard Section -->
                 
                 <!-- Welcome Banner -->
                 <div class="bg-gradient-to-r from-chuss-green to-chuss-green-light rounded-3xl p-8 mb-8 text-white relative overflow-hidden shadow-float">
@@ -20,7 +20,7 @@
                     <div class="relative z-10">
                         <h3 class="text-2xl md:text-3xl font-bold mb-2">Bonjour, {{ Auth::user()->name }} 👋</h3>
                         <p class="text-chuss-cream text-lg opacity-90 max-w-2xl">
-                            Bienvenue sur votre tableau de bord administrateur. Voici un aperçu des activités récentes de l'application SIGRH CHUSS.
+                            Bienvenue sur votre tableau de bord. Voici un aperçu des repas prévus aujourd'hui à l'hôpital.
                         </p>
                     </div>
                 </div>
@@ -90,6 +90,7 @@
                     </div>
                 </div>
 
+                @hasanyrole('administrateur|super_administrateur')
                 <!-- Actions & Recent -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <!-- Actions -->
@@ -152,6 +153,7 @@
                         </div>
                     </div>
                 </div>
+                @endhasanyrole
 
             @else
                 <!-- Default Dashboard for other roles (SUS, Prestataire, etc.) -->

@@ -47,7 +47,7 @@
                                     @endif
                                 @else
                                     <td class="px-3 py-2">
-                                        <select name="repas[{{ $dateStr }}][{{ $typeRepas }}][plat_id]"
+                                        <select name="repas[{{ $dateStr }}][{{ $typeRepas }}][plat_id]" required
                                             class="block w-full text-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                                             <option value="">Sélectionnez un plat...</option>
                                             @foreach ($platsDisponibles as $plat)
