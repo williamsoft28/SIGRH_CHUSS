@@ -141,6 +141,7 @@ class BeneficiaireController extends Controller
 
             $bon = $declaration->bonRepas()->create([
                 'code_unique' => BonRepas::genererCodeUnique(),
+                'code_court' => BonRepas::genererCodeCourt($service, $droitsParJour->flatten()->unique()->values()->all()),
                 'type_periode' => 'hebdomadaire',
                 'date_debut' => $lundi->toDateString(),
                 'date_fin' => $dimanche->toDateString(),

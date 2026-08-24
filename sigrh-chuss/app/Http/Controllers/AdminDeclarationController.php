@@ -44,6 +44,7 @@ class AdminDeclarationController extends Controller
 
             return $declaration->bonRepas()->create([
                 'code_unique' => BonRepas::genererCodeUnique(),
+                'code_court' => BonRepas::genererCodeCourt($declaration->beneficiaire->service, $declaration->repas ?? []),
                 'type_periode' => $declaration->type_periode,
                 'date_debut' => $declaration->date_debut,
                 'date_fin' => $declaration->date_fin,

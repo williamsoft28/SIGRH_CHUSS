@@ -42,6 +42,12 @@
                         <dt class="text-gray-500">{{ __('Code unique') }}</dt>
                         <dd class="font-mono text-xs text-gray-900 break-all">{{ $bon->code_unique }}</dd>
                     </div>
+                    @if($bon->code_court)
+                    <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 bg-gray-50">
+                        <dt class="text-sm font-medium text-gray-500">Code Court (Manuel)</dt>
+                        <dd class="font-mono text-lg font-bold text-gray-900 break-all bg-white px-3 py-1 rounded inline-block">{{ $bon->code_court }}</dd>
+                    </div>
+                    @endif
                 </dl>
 
                 <div class="flex flex-col items-center gap-4 border-t pt-6">

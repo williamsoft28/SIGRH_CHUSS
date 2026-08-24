@@ -20,7 +20,9 @@ class VerificationBonService
     {
         $maintenant = $maintenant ?? now();
 
-        $bon = BonRepas::where('code_unique', trim($codeUnique))
+        $code = trim($codeUnique);
+        $bon = BonRepas::where('code_unique', $code)
+            ->orWhere('code_court', mb_strtoupper($code))
             ->with(['declarationJour.beneficiaire', 'droits'])
             ->first();
 

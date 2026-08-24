@@ -46,5 +46,13 @@
         <p class="text-xs font-mono text-gray-400 break-all">
             {{ $bon->code_unique }}
         </p>
+        @if($bon->code_court)
+            <div class="mt-4 text-center">
+                <p class="text-sm font-semibold text-gray-500">Ou code d'identification manuelle :</p>
+                <div class="inline-block mt-1 px-4 py-2 bg-gray-100 rounded-lg text-2xl font-black tracking-widest text-chuss-dark border-2 border-gray-200">
+                    {{ $bon->code_court }}
+                </div>
+            </div>
+        @endif
     </div>
 </x-guest-layout>
