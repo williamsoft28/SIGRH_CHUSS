@@ -47,7 +47,7 @@ class AdminAlerteController extends Controller
         ]);
         $alerte->save();
 
-        return redirect()->route('admin.alertes.create')->with('status', 'L\'alerte a été envoyée au service avec succès.');
+        return redirect()->route('hotellerie.alertes.create')->with('status', 'L\'alerte a été envoyée au service avec succès.');
     }
 
     /**

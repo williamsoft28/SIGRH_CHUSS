@@ -26,7 +26,7 @@
 
             <div class="bg-white shadow-sm sm:rounded-lg p-6">
                 <!-- Formulaire de sélection du service (en GET pour recharger la page et afficher les bénéficiaires) -->
-                <form method="GET" action="{{ route('admin.alertes.create') }}" class="mb-6 pb-6 border-b border-gray-200">
+                <form method="GET" action="{{ route('hotellerie.alertes.create') }}" class="mb-6 pb-6 border-b border-gray-200">
                     <div>
                         <x-input-label for="service_id_filter" :value="__('1. Sélectionner le service en infraction')" />
                         <div class="flex items-center gap-4 mt-1">
@@ -45,7 +45,7 @@
 
                 @if(request()->has('service_id') && request('service_id') != '')
                 <!-- Formulaire principal d'envoi de l'alerte -->
-                <form method="POST" action="{{ route('admin.alertes.store') }}">
+                <form method="POST" action="{{ route('hotellerie.alertes.store') }}">
                     @csrf
                     <input type="hidden" name="service_id" value="{{ request('service_id') }}">
 
