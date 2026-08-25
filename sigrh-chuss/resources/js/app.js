@@ -77,6 +77,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (platSelects.length > 0) {
                     firstErrorEl = platSelects[0];
                 }
+            } else {
+                // For each selected plat (except petit_dejeuner) ensure viande and dessert are selected
+                for (const select of platSelects.filter(s => !!s.value)) {
+                    // name like repas[2026-08-10][dejeuner][plat_id]
+                    const name = select.getAttribute('name') || '';
+                    const m = name.match(/^repas\[(.+?)\]\[(.+?)\]\[plat_id\]$/);
+                    if (!m) continue;
+                    const date = m[1];
+                    const type = m[2];
+                    if (type === 'petit_dejeuner') continue;
+
+                    const viandeSel = menuForm.querySelector(`select[name="repas[${date}][${type}][viande_id]"]`);
+                    const dessertSel = menuForm.querySelector(`select[name="repas[${date}][${type}][dessert_id]"]`);
+
+                    if (viandeSel && !viandeSel.value) {
+                        const err = document.createElement('p');
+                        err.className = errorClass + ' text-red-600 text-sm mt-1';
+                        err.textContent = '⚠️ Veuillez sélectionner une viande pour ce repas.';
+                        viandeSel.setAttribute('aria-invalid', 'true');
+                        viandeSel.parentNode.appendChild(err);
+                        if (!firstErrorEl) firstErrorEl = viandeSel;
+                    }
+
+                    if (dessertSel && !dessertSel.value) {
+                        const err = document.createElement('p');
+                        err.className = errorClass + ' text-red-600 text-sm mt-1';
+                        err.textContent = '⚠️ Veuillez sélectionner un dessert pour ce repas.';
+                        dessertSel.setAttribute('aria-invalid', 'true');
+                        dessertSel.parentNode.appendChild(err);
+                        if (!firstErrorEl) firstErrorEl = dessertSel;
+                    }
+                }
             }
 
             // Validate date_debut (hidden input) exists
@@ -200,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
         menuForm.addEventListener('change', (ev) => {
             const target = ev.target;
             if (!target) return;
-            if (target.matches('select[name$="[plat_id]"], input[name="date_debut"]')) {
+            if (target.matches('select[name$="[plat_id]"], select[name$="[viande_id]"], select[name$="[dessert_id]"], input[name="date_debut"]')) {
                 const siblingError = target.parentNode.querySelector('.' + errorClass);
                 if (siblingError && target.value) siblingError.remove();
                 if (target.value) target.removeAttribute('aria-invalid');
