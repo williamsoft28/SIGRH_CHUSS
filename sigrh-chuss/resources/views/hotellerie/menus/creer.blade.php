@@ -33,7 +33,7 @@
                 </form>
             </div>
 
-            <form id="menu-composer-form" method="POST" action="{{ route('hotellerie.menus.store') }}">
+            <form id="menu-composer-form" method="POST" action="{{ route('hotellerie.menus.store') }}" onsubmit="alert('Le formulaire est bien envoyé au serveur ! Veuillez patienter...');">
                 @csrf
                 <input type="hidden" name="date_debut" value="{{ $lundi->toDateString() }}">
 

@@ -92,7 +92,7 @@
                 </form>
             @endif
 
-            <form id="menu-composer-form" method="POST" action="{{ route('hotellerie.menus.update', $menu) }}">
+            <form id="menu-composer-form" method="POST" action="{{ route('hotellerie.menus.update', $menu) }}" onsubmit="alert('Le formulaire est bien envoyé au serveur ! Veuillez patienter...');">
                 @csrf
                 @method('PUT')
 
