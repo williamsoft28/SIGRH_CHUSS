@@ -85,6 +85,10 @@ Route::middleware(['auth', 'role:administrateur'])->prefix('admin')->name('admin
     Route::put('/beneficiaires/{beneficiaire}', [AdminBeneficiaireController::class, 'update'])->name('beneficiaires.update');
     Route::delete('/beneficiaires/{beneficiaire}', [AdminBeneficiaireController::class, 'destroy'])->name('beneficiaires.destroy');
 
+    // Rapports
+    Route::get('/rapports', [App\Http\Controllers\AdminRapportController::class, 'index'])->name('rapports.index');
+    Route::post('/rapports/generer', [App\Http\Controllers\AdminRapportController::class, 'generer'])->name('rapports.generer');
+
     Route::get('/sus', [AdminSusController::class, 'index'])->name('sus.index');
     Route::get('/sus/creer', [AdminSusController::class, 'create'])->name('sus.create');
     Route::post('/sus', [AdminSusController::class, 'store'])->name('sus.store');

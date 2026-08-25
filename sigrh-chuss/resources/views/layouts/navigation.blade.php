@@ -30,6 +30,12 @@
             </x-sidebar-link>
         @endrole
 
+        @hasanyrole('administrateur|super_administrateur')
+            <x-sidebar-link :href="route('admin.rapports.index')" :active="request()->routeIs('admin.rapports.*')">
+                {{ __('Rapports / Facturation') }}
+            </x-sidebar-link>
+        @endhasanyrole
+
         @role('super_administrateur')
             <x-sidebar-link :href="route('super_admin.users.index')" :active="request()->routeIs('super_admin.users.*')">
                 {{ __('Gestion Utilisateurs') }}

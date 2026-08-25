@@ -17,7 +17,7 @@
             </h4>
 
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+                <table class="w-full text-left border-collapse no-grid">
                     <thead class="bg-gradient-to-r from-chuss-green/5 to-chuss-amber/5 border-b border-gray-100">
                         <tr class="hover:bg-white/60 transition-colors duration-200 group">
                             <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ __('Repas') }}</th>
