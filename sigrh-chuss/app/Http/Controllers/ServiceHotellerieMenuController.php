@@ -196,8 +196,8 @@ class ServiceHotellerieMenuController extends Controller
         return $request->validate(
             array_merge($reglesSupplementaires, [
                 'repas' => ['required', 'array'],
-                'repas.*' => ['required', 'array'],
-                'repas.*.*.plat_id' => ['required', 'exists:plats,id'],
+                'repas.*' => ['nullable', 'array'],
+                'repas.*.*.plat_id' => ['nullable', 'exists:plats,id'],
                 'repas.*.*.viande_id' => ['nullable', 'exists:viandes,id'],
                 'repas.*.*.dessert_id' => ['nullable', 'exists:plats,id'],
             ]),

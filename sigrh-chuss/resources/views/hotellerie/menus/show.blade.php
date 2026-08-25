@@ -112,23 +112,4 @@
             </form>
         </div>
     </div>
-
-    @if ($peutModifier)
-    <script>
-        document.getElementById('menu-composer-form').addEventListener('submit', function(e) {
-            let plats = document.querySelectorAll('.plat-requis');
-            for(let i = 0; i < plats.length; i++) {
-                if(plats[i].value === '') {
-                    e.preventDefault();
-                    plats[i].focus();
-                    plats[i].classList.add('border-red-500', 'ring-red-500');
-                    alert("Attention : Vous avez oublié de sélectionner un plat principal (en surbrillance rouge) !");
-                    return;
-                } else {
-                    plats[i].classList.remove('border-red-500', 'ring-red-500');
-                }
-            }
-        });
-    </script>
-    @endif
 </x-app-layout>

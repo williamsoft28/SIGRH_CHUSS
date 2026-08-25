@@ -48,7 +48,7 @@
                                 @else
                                     <td class="px-3 py-2">
                                         <select name="repas[{{ $dateStr }}][{{ $typeRepas }}][plat_id]"
-                                            class="block w-full text-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm plat-requis">
+                                            class="block w-full text-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                                             <option value="">Sélectionnez un plat...</option>
                                             @foreach ($platsDisponibles as $plat)
                                                 <option value="{{ $plat->id }}" @selected(old("repas.{$dateStr}.{$typeRepas}.plat_id", $selection['plat_id'] ?? null) == $plat->id)>
