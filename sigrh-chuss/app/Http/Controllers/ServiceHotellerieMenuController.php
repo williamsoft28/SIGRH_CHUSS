@@ -22,12 +22,12 @@ class ServiceHotellerieMenuController extends Controller
      */
     public function index(): View
     {
-        $nouveaux = Menu::where('statut', 'en_observation')
+        $nouveaux = Menu::whereIn('statut', ['en_observation', 'valide'])
             ->orderByDesc('annee')
             ->orderByDesc('numero_semaine')
             ->get();
-            
-        $menus = Menu::where('statut', '!=', 'en_observation')
+
+        $menus = Menu::whereNotIn('statut', ['en_observation', 'valide'])
             ->orderByDesc('annee')
             ->orderByDesc('numero_semaine')
             ->paginate(20);
@@ -173,7 +173,7 @@ class ServiceHotellerieMenuController extends Controller
      */
     public function valider(Menu $menu): RedirectResponse
     {
-        abort_unless($menu->statut === 'en_observation', 409, "Ce menu n'est pas en attente de validation.");
+        abort_unless(in_array($menu->statut, ['en_observation', 'valide'], true), 409, "Ce menu n'est pas en attente de validation finale.");
 
         $lundiSuivantAttendu = today()->startOfWeek(Carbon::MONDAY)->addWeek();
         $respecteRegleDuJeudi = today()->isThursday() && $menu->date_debut->isSameDay($lundiSuivantAttendu);
@@ -182,6 +182,8 @@ class ServiceHotellerieMenuController extends Controller
             'statut' => 'applique',
             'date_validation' => now(),
         ]);
+
+        $this->envoyerMenuAuxSus($menu);
 
         $message = 'Menu validé et appliqué.';
         if (! $respecteRegleDuJeudi) {
@@ -216,6 +218,22 @@ class ServiceHotellerieMenuController extends Controller
                 'repas.*.*.dessert_id' => ['nullable', 'exists:plats,id'],
             ])
         );
+    }
+
+    /**
+     * Envoie le menu final à tous les comptes SUS inscrits.
+     */
+    private function envoyerMenuAuxSus(Menu $menu): void
+    {
+        $suses = \App\Models\User::role('sus')->pluck('email')->filter()->unique()->toArray();
+
+        if (empty($suses)) {
+            return;
+        }
+
+        foreach ($suses as $email) {
+            \Illuminate\Support\Facades\Mail::to($email)->send(new \App\Mail\MenuAppliqueMail($menu));
+        }
     }
 
     /**

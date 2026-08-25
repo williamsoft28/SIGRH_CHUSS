@@ -28,6 +28,9 @@
             <x-sidebar-link :href="route('derogations.index')" :active="request()->routeIs('derogations.*')">
                 {{ __('Dérogations') }}
             </x-sidebar-link>
+            <x-sidebar-link :href="route('declarations.alertes.index')" :active="request()->routeIs('declarations.alertes.*')">
+                {{ __('Mes Alertes') }}
+            </x-sidebar-link>
         @endrole
 
         @hasanyrole('administrateur|super_administrateur')
@@ -82,8 +85,11 @@
         @endrole
 
         @role('service_hotellerie')
-            <x-sidebar-link :href="route('hotellerie.menus.index')" :active="request()->routeIs('hotellerie.*')">
+            <x-sidebar-link :href="route('hotellerie.menus.index')" :active="request()->routeIs('hotellerie.menus.*')">
                 {{ __('Menus') }}
+            </x-sidebar-link>
+            <x-sidebar-link :href="route('hotellerie.alertes.create')" :active="request()->routeIs('hotellerie.alertes.*')">
+                {{ __('Envoyer une alerte') }}
             </x-sidebar-link>
         @endrole
 

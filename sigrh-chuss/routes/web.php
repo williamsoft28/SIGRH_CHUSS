@@ -53,6 +53,11 @@ Route::middleware(['auth', 'role:sus'])->prefix('sus')->name('declarations.')->g
     Route::get('/declarations', [SusDeclarationController::class, 'index'])->name('index');
     Route::get('/declarations/creer', [SusDeclarationController::class, 'create'])->name('create');
     Route::post('/declarations', [SusDeclarationController::class, 'store'])->name('store');
+    
+    // Alertes / Avertissements
+    Route::get('/alertes', [App\Http\Controllers\SusAlerteController::class, 'index'])->name('alertes.index');
+    Route::get('/alertes/{alerte}', [App\Http\Controllers\SusAlerteController::class, 'show'])->name('alertes.show');
+    Route::get('/alertes/{alerte}/pdf', [App\Http\Controllers\SusAlerteController::class, 'pdf'])->name('alertes.pdf');
 });
 
 Route::middleware(['auth', 'role:sus'])->prefix('sus/declarations-patients')->name('beneficiaires.declarations-patients.')->group(function () {
@@ -127,6 +132,10 @@ Route::middleware(['auth', 'role:service_hotellerie'])->prefix('hotellerie')->na
     Route::put('/menus/{menu}', [ServiceHotellerieMenuController::class, 'update'])->name('menus.update');
     Route::post('/menus/{menu}/valider', [ServiceHotellerieMenuController::class, 'valider'])->name('menus.valider');
     Route::post('/observations/{observation}/traiter', [ServiceHotellerieMenuController::class, 'marquerObservationTraitee'])->name('observations.traiter');
+    
+    // Alertes / Avertissements
+    Route::get('/alertes/creer', [App\Http\Controllers\AdminAlerteController::class, 'create'])->name('alertes.create');
+    Route::post('/alertes', [App\Http\Controllers\AdminAlerteController::class, 'store'])->name('alertes.store');
 });
 
 Route::middleware(['auth', 'role:prestataire'])->prefix('prestataire')->name('prestataire.')->group(function () {
@@ -136,6 +145,7 @@ Route::middleware(['auth', 'role:prestataire'])->prefix('prestataire')->name('pr
     Route::put('/menus/{menu}', [PrestataireMenuController::class, 'update'])->name('menus.update');
     Route::post('/menus/{menu}/observations', [PrestataireMenuController::class, 'storeObservation'])->name('menus.observations.store');
     Route::post('/menus/{menu}/envoyer', [PrestataireMenuController::class, 'envoyerObservations'])->name('menus.envoyer');
+    Route::post('/menus/{menu}/valider', [PrestataireMenuController::class, 'valider'])->name('menus.valider');
 });
 
 Route::middleware(['auth', 'role:super_administrateur'])->prefix('super-admin')->name('super_admin.')->group(function () {
@@ -153,7 +163,7 @@ Route::middleware(['auth', 'role:super_administrateur'])->prefix('super-admin')-
     Route::delete('/derogations/{derogation}', [AdminDerogationController::class, 'destroy'])->name('derogations.destroy');
 });
 
-Route::middleware(['auth', 'role:service_hotellerie|prestataire'])->group(function () {
+Route::middleware(['auth', 'role:sus|service_hotellerie|prestataire'])->group(function () {
     Route::get('/menus/{menu}/telecharger', [\App\Http\Controllers\MenuDownloadController::class, 'download'])->name('menus.telecharger');
 });
 

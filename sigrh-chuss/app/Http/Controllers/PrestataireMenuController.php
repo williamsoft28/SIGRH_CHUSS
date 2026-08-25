@@ -205,4 +205,21 @@ class PrestataireMenuController extends Controller
             ->route('prestataire.menus.index')
             ->with('status', 'Menu renvoyé au service hôtellerie.');
     }
+
+    /**
+     * Valide le menu à l'étape prestataire sans observation.
+     */
+    public function valider(Menu $menu): RedirectResponse
+    {
+        abort_unless($menu->statut === 'soumis', 409, "Ce menu n'est plus ouvert à la validation.");
+
+        $menu->update([
+            'statut' => 'valide',
+            'date_validation' => now(),
+        ]);
+
+        return redirect()
+            ->route('prestataire.menus.index')
+            ->with('status', 'Menu validé. Le service hôtellerie peut maintenant le confirmer finalement.');
+    }
 }

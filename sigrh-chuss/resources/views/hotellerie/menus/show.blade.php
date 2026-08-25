@@ -79,17 +79,26 @@
                 </div>
             @endif
 
-            @if ($menu->statut === 'en_observation')
-                <form method="POST" action="{{ route('hotellerie.menus.valider', $menu) }}"
-                      onsubmit="return confirm('{{ __('Valider et appliquer ce menu ?') }}');">
-                    @csrf
-                    <div class="flex justify-end">
+            @if (in_array($menu->statut, ['en_observation', 'valide'], true))
+                <div class="flex justify-end gap-3">
+                    <a href="{{ route('menus.telecharger', $menu) }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500">
+                        {{ __('Télécharger le menu') }}
+                    </a>
+                    <form method="POST" action="{{ route('hotellerie.menus.valider', $menu) }}"
+                          onsubmit="return confirm('{{ __('Valider et appliquer ce menu ?') }}');">
+                        @csrf
                         <button type="submit"
                             class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-500">
                             {{ __('Valider et appliquer') }}
                         </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
+            @elseif ($menu->statut === 'applique')
+                <div class="flex justify-end">
+                    <a href="{{ route('menus.telecharger', $menu) }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500">
+                        {{ __('Télécharger le menu') }}
+                    </a>
+                </div>
             @endif
 
             <form id="menu-composer-form" method="POST" action="{{ route('hotellerie.menus.update', $menu) }}">

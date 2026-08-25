@@ -59,6 +59,19 @@
                 @endforelse
 
                 @if ($menu->statut === 'soumis')
+                    <div class="flex flex-wrap gap-3 justify-end">
+                        <a href="{{ route('menus.telecharger', $menu) }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500">
+                            {{ __('Télécharger le menu') }}
+                        </a>
+                        <form method="POST" action="{{ route('prestataire.menus.valider', $menu) }}"
+                              onsubmit="return confirm('{{ __('Valider ce menu à votre niveau ?') }}');">
+                            @csrf
+                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-500">
+                                {{ __('Valider le menu') }}
+                            </button>
+                        </form>
+                    </div>
+
                     <form method="POST" action="{{ route('prestataire.menus.observations.store', $menu) }}" class="pt-2">
                         @csrf
                         <x-input-label for="contenu" :value="__('Nouvelle observation')" />
@@ -81,6 +94,12 @@
                             </div>
                         </form>
                     @endif
+                @elseif ($menu->statut === 'valide')
+                    <div class="flex justify-end">
+                        <a href="{{ route('menus.telecharger', $menu) }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500">
+                            {{ __('Télécharger le menu') }}
+                        </a>
+                    </div>
                 @endif
             </div>
 
