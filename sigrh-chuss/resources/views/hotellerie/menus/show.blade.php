@@ -94,10 +94,18 @@
                     </form>
                 </div>
             @elseif ($menu->statut === 'applique')
-                <div class="flex justify-end">
+                <div class="flex justify-end gap-3">
                     <a href="{{ route('menus.telecharger', $menu) }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500">
                         {{ __('Télécharger le menu') }}
                     </a>
+                    <form method="POST" action="{{ route('hotellerie.menus.recomposer', $menu) }}"
+                          onsubmit="return confirm('{{ __('Recomposer un autre menu pour cette semaine ?') }}');">
+                        @csrf
+                        <button type="submit"
+                            class="inline-flex items-center px-4 py-2 bg-amber-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-amber-500">
+                            {{ __('Composer un autre menu') }}
+                        </button>
+                    </form>
                 </div>
             @endif
 

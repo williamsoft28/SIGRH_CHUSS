@@ -50,4 +50,29 @@ class MenuFlowTest extends TestCase
 
         Mail::assertSent(MenuAppliqueMail::class, 2);
     }
+
+    public function test_hotelier_can_reopen_a_final_menu_to_compose_another_version(): void
+    {
+        Role::firstOrCreate(['name' => 'service_hotellerie', 'guard_name' => 'web']);
+
+        $hotel = User::factory()->create();
+        $hotel->assignRole('service_hotellerie');
+
+        $menu = Menu::create([
+            'numero_semaine' => 39,
+            'annee' => 2026,
+            'date_debut' => Carbon::create(2026, 9, 21),
+            'date_fin' => Carbon::create(2026, 9, 27),
+            'statut' => 'applique',
+            'date_soumission' => now(),
+            'date_validation' => now(),
+            'nb_modifications' => 0,
+        ]);
+
+        $response = $this->actingAs($hotel)
+            ->post(route('hotellerie.menus.recomposer', $menu));
+
+        $response->assertRedirect(route('hotellerie.menus.show', $menu));
+        $this->assertDatabaseHas('menus', ['id' => $menu->id, 'statut' => 'soumis']);
+    }
 }

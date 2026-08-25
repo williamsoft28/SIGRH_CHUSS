@@ -131,6 +131,7 @@ Route::middleware(['auth', 'role:service_hotellerie'])->prefix('hotellerie')->na
     Route::get('/menus/{menu}', [ServiceHotellerieMenuController::class, 'show'])->name('menus.show');
     Route::put('/menus/{menu}', [ServiceHotellerieMenuController::class, 'update'])->name('menus.update');
     Route::post('/menus/{menu}/valider', [ServiceHotellerieMenuController::class, 'valider'])->name('menus.valider');
+    Route::post('/menus/{menu}/recomposer', [ServiceHotellerieMenuController::class, 'recomposer'])->name('menus.recomposer');
     Route::post('/observations/{observation}/traiter', [ServiceHotellerieMenuController::class, 'marquerObservationTraitee'])->name('observations.traiter');
     
     // Alertes / Avertissements

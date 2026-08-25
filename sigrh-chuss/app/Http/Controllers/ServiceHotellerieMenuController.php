@@ -48,7 +48,7 @@ class ServiceHotellerieMenuController extends Controller
             ->where('annee', $lundi->year)
             ->first();
 
-        if ($menu && $menu->statut !== 'soumis') {
+        if ($menu && ! in_array($menu->statut, ['soumis', 'applique', 'valide'], true)) {
             return redirect()
                 ->route('hotellerie.menus.show', $menu)
                 ->with('status', 'Un menu existe déjà pour cette semaine (statut : '.$menu->statut.'). Utilisez cet écran pour le modifier.');
@@ -81,10 +81,18 @@ class ServiceHotellerieMenuController extends Controller
             ->where('annee', $lundi->year)
             ->first();
 
-        if ($menu && $menu->statut !== 'soumis') {
+        if ($menu && ! in_array($menu->statut, ['soumis', 'applique', 'valide'], true)) {
             return redirect()
                 ->route('hotellerie.menus.show', $menu)
                 ->with('status', 'Un menu existe déjà pour cette semaine. Utilisez cet écran pour le modifier.');
+        }
+
+        if ($menu && in_array($menu->statut, ['applique', 'valide'], true)) {
+            $menu->update([
+                'statut' => 'soumis',
+                'date_soumission' => now(),
+                'date_validation' => null,
+            ]);
         }
 
         $menu = DB::transaction(function () use ($menu, $lundi, $dimanche, $data) {
@@ -201,6 +209,23 @@ class ServiceHotellerieMenuController extends Controller
         $observation->update(['statut' => 'traitee']);
 
         return back()->with('status', 'Observation marquée comme traitée.');
+    }
+
+    /**
+     * Permet de rebasculer un menu finalisé en mode édition pour en composer une autre version.
+     */
+    public function recomposer(Menu $menu): RedirectResponse
+    {
+        abort_unless(in_array($menu->statut, ['applique', 'valide'], true), 409, "Ce menu ne peut pas être recomposé dans son état actuel.");
+
+        $menu->update([
+            'statut' => 'soumis',
+            'date_soumission' => now(),
+            'date_validation' => null,
+            'nb_modifications' => 0,
+        ]);
+
+        return redirect()->route('hotellerie.menus.show', $menu)->with('status', 'Menu remis en édition. Vous pouvez maintenant composer une autre version.');
     }
 
     /**
