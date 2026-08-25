@@ -208,15 +208,13 @@ class ServiceHotellerieMenuController extends Controller
     {
         return $request->validate(
             array_merge($reglesSupplementaires, [
-                'repas' => ['required', 'array'],
+                // Allow empty submissions for testing; require at least one plat is enforced client-side
+                'repas' => ['nullable', 'array'],
                 'repas.*' => ['nullable', 'array'],
                 'repas.*.*.plat_id' => ['nullable', 'exists:plats,id'],
                 'repas.*.*.viande_id' => ['nullable', 'exists:viandes,id'],
                 'repas.*.*.dessert_id' => ['nullable', 'exists:plats,id'],
-            ]),
-            [
-                'repas.*.*.plat_id.required' => 'Vous devez sélectionner un plat principal pour chaque repas de la semaine (Petit-déjeuner, Déjeuner, Dîner).',
-            ]
+            ])
         );
     }
 

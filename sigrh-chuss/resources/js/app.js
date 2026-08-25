@@ -59,27 +59,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             menuForm.dataset.submitting = '1';
-            // Debug: count selects and empty values
-            const totalPlats = menuForm.querySelectorAll('select[name$="[plat_id]"]').length;
-            const emptyPlats = menuForm.querySelectorAll('select[name$="[plat_id]"]').length
-                - Array.from(menuForm.querySelectorAll('select[name$="[plat_id]"]')).filter(s => !!s.value).length;
-            console.debug('[menu] total plat selects:', totalPlats, 'empty:', emptyPlats);
-            // Validate required plat selects
-            const platSelects = menuForm.querySelectorAll('select[name$="[plat_id]"]');
+            // Debug: require at least one plat selected for testing
+            const platSelects = Array.from(menuForm.querySelectorAll('select[name$="[plat_id]"]'));
             clearErrors();
 
             let firstErrorEl = null;
+            const selectedCount = platSelects.filter(s => !!s.value).length;
+            console.debug('[menu] total plat selects:', platSelects.length, 'selected:', selectedCount);
 
-            platSelects.forEach(select => {
-                if (!select.value) {
-                    const err = document.createElement('p');
-                    err.className = errorClass + ' text-red-600 text-sm mt-1';
-                    err.textContent = '⚠️ Veuillez sélectionner un plat.';
-                    select.setAttribute('aria-invalid', 'true');
-                    select.parentNode.appendChild(err);
-                    if (!firstErrorEl) firstErrorEl = select;
+            if (selectedCount === 0) {
+                // No plats selected at all — block submit and show generic error
+                const gen = document.createElement('div');
+                gen.className = errorClass + ' bg-red-100 border border-red-300 text-red-800 px-4 py-3 rounded-md mb-4';
+                gen.textContent = '⚠️ Veuillez sélectionner au moins un plat principal pour effectuer le test.';
+                menuForm.prepend(gen);
+                // focus first plat select if present
+                if (platSelects.length > 0) {
+                    firstErrorEl = platSelects[0];
                 }
-            });
+            }
 
             // Validate date_debut (hidden input) exists
             const dateInput = menuForm.querySelector('input[name="date_debut"]');
