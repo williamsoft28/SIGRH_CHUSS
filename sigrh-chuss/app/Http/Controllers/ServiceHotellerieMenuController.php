@@ -105,9 +105,22 @@ class ServiceHotellerieMenuController extends Controller
             return $menu;
         });
 
+        // Try to notify prestataire users by email. If mail fails, report it
+        $statusMessage = 'Menu soumis au prestataire.';
+        try {
+            $prestataires = \App\Models\User::role('prestataire')->pluck('email')->filter()->unique()->toArray();
+            if (! empty($prestataires)) {
+                \Illuminate\Support\Facades\Mail::to($prestataires)->send(new \App\Mail\MenuSoumisMail($menu));
+            }
+        } catch (\Throwable $e) {
+            // Log but do not break the user flow
+            logger()->error('Erreur lors de l\'envoi du mail de soumission de menu: ' . $e->getMessage());
+            $statusMessage = 'Menu soumis (envoi au prestataire échoué — voir logs).';
+        }
+
         return redirect()
             ->route('hotellerie.menus.show', $menu)
-            ->with('status', 'Menu soumis au prestataire.');
+            ->with('status', $statusMessage);
     }
 
     /**

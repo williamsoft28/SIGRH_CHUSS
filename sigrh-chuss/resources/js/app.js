@@ -53,6 +53,12 @@ document.addEventListener('DOMContentLoaded', () => {
         menuForm.addEventListener('submit', async (e) => {
             console.debug('[menu] submit event received');
             e.preventDefault();
+            // Prevent double submission
+            if (menuForm.dataset.submitting === '1') {
+                console.debug('[menu] submit ignored: already submitting');
+                return;
+            }
+            menuForm.dataset.submitting = '1';
             // Debug: count selects and empty values
             const totalPlats = menuForm.querySelectorAll('select[name$="[plat_id]"]').length;
             const emptyPlats = menuForm.querySelectorAll('select[name$="[plat_id]"]').length
@@ -102,6 +108,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const method = (menuForm.getAttribute('method') || 'POST').toUpperCase();
             const formData = new FormData(menuForm);
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+            // Disable submit buttons while request is in flight
+            const submitButtons = Array.from(menuForm.querySelectorAll('button[type="submit"], input[type="submit"]'));
+            submitButtons.forEach(b => b.setAttribute('disabled', 'disabled'));
 
             try {
                 // Debug: show form data that will be sent
@@ -159,21 +169,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                // On success, Laravel typically redirects; fetch follows redirects and sets redirected flag
-                if (resp.redirected) {
-                    window.location.href = resp.url;
+                // Success: prefer a JSON message if available, otherwise show a generic success banner.
+                if (resp.ok) {
+                    const contentType = resp.headers.get('Content-Type') || '';
+                    const json = contentType.includes('application/json') ? await resp.json().catch(() => null) : null;
+                    const msg = (json && (json.message || json.status)) ? (json.message || json.status) : 'Opération réussie.';
+                    const success = document.createElement('div');
+                    success.className = 'menu-success bg-green-100 border border-green-300 text-green-800 px-4 py-3 rounded-md mb-4';
+                    success.textContent = msg;
+                    menuForm.prepend(success);
+                    // Optionally clear or keep form; here we keep data but mark as not submitting to allow navigation if needed.
                     return;
                 }
-
-                // Try JSON response with location
-                const json = await resp.json().catch(() => null);
-                if (json && json.location) {
-                    window.location.href = json.location;
-                    return;
-                }
-
-                // Fallback: reload page
-                window.location.reload();
             } catch (err) {
                 console.error('[menu] AJAX error', err);
                 const gen = document.createElement('div');
@@ -182,6 +189,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 menuForm.prepend(gen);
             } finally {
                 document.querySelectorAll('.menu-busy').forEach(n => n.remove());
+                try {
+                    menuForm.dataset.submitting = '0';
+                    submitButtons.forEach(b => b.removeAttribute('disabled'));
+                } catch (e) {
+                    console.debug('[menu] cleanup error', e);
+                }
             }
         });
 
